@@ -1,0 +1,8 @@
+// cấu hình nơi tạo dữ liệu kết nối với db,và để sequelize có thể thao tác với dữ liệu của chúng ta qua các câu lệnh của sequelize
+const path = require('path');
+module.exports = {
+  'config': path.resolve('./src/config', 'config.json'),
+  'migrations-path': path.resolve('./src', 'migrations'),
+  'models-path': path.resolve('./src', 'models'),
+  'seeders-path': path.resolve('./src', 'seeders')
+}
