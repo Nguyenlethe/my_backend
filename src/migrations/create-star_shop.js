@@ -1,0 +1,48 @@
+'use strict';
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('star_shops', {
+    id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      idShop: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      itemsId: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      userId: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      1: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      2: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      3: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      4: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      5: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      }
+    });
+  },
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('star_shops');
+  }
+};
