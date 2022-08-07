@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     idUser:  DataTypes.INTEGER,
     idShop: DataTypes.INTEGER,
     permission: DataTypes.STRING, 
-    dateCreate: DataTypes.DATE,
+    
   }, {
     sequelize,
     modelName: 'Massage',  

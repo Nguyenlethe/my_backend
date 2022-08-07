@@ -9,8 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   Shop_info.init({
     manageId: DataTypes.INTEGER,
-    businessItems: DataTypes.STRING,
-    dateCreate: DataTypes.DATE,
+    businessItems: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Shop_info',  

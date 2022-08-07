@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     repContent:  DataTypes.STRING,
     status: DataTypes.STRING,
     timeRepFeedback: DataTypes.STRING, 
-    dateCreate: DataTypes.DATE,
+    
   }, {
     sequelize,
     modelName: 'Rate_feedback',  

@@ -18,7 +18,6 @@ module.exports = (sequelize, DataTypes) => {
     voucherApply: DataTypes.STRING,
     voucherApplyTow: DataTypes.STRING,
     status: DataTypes.STRING,
-    dateCreate: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'Manage_oder',  

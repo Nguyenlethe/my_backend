@@ -25,7 +25,12 @@ module.exports = {
       timeRepFeedback: {
         type: Sequelize.STRING
       },
-      updateTime: {
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
         type: Sequelize.DATE
       }
     });

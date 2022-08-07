@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     userId:  DataTypes.INTEGER,
     idShop: DataTypes.INTEGER,
     status: DataTypes.STRING,
-    dateCreate: DataTypes.DATE,
+    
   }, {
     sequelize,
     modelName: 'Notification',  

@@ -15,7 +15,11 @@ module.exports = {
       businessItems: {
         type: Sequelize.STRING
       },
-      dateCreate: {
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
       }

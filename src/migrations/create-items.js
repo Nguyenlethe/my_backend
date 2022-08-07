@@ -34,11 +34,12 @@ module.exports = {
       newPrice: {
         type: Sequelize.INTEGER
       },
-      dateCreate: {
+      createdAt: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updateTime: {
+      updatedAt: {
+        allowNull: false,
         type: Sequelize.DATE
       }
     });

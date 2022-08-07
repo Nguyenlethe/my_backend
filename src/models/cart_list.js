@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     imageLink: DataTypes.STRING,
     itemsColor: DataTypes.STRING,
     itemsSize: DataTypes.STRING,
-    dateCreate: DataTypes.DATE,
+    
   }, {
     sequelize,
     modelName: 'CartList',  

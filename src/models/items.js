@@ -18,8 +18,6 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     price: DataTypes.INTEGER,
     newPrice: DataTypes.INTEGER,
-    dateCreate: DataTypes.DATE,
-    updateTime: DataTypes.DATE,
 
   }, {
     sequelize,

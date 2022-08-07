@@ -16,8 +16,8 @@ module.exports = (sequelize, DataTypes) => {
     phoneNumber: DataTypes.STRING,
     pay: DataTypes.STRING,
     province: DataTypes.STRING,
-    like: DataTypes.STRING,
-    dateCreate: DataTypes.DATE,
+    follow: DataTypes.INTEGER,
+    
   }, {
     sequelize,
     modelName: 'Shop',  

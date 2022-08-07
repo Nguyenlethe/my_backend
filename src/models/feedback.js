@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.STRING, 
     timeFeedback: DataTypes.STRING,
     start: DataTypes.INTEGER,
-    dateCreate: DataTypes.DATE,
+    
   }, {
     sequelize,
     modelName: 'Feedback',  

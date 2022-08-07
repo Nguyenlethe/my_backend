@@ -7,22 +7,27 @@ module.exports = (sequelize, DataTypes) => {
    
     }
   };
+  
   User.init({
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     firstName: DataTypes.STRING,
     lastName:  DataTypes.STRING,
-    address: DataTypes.STRING,
     gender: DataTypes.STRING, 
     permission: DataTypes.STRING,
     phoneNumber: DataTypes.STRING,
     avata: DataTypes.STRING,
     avataLink: DataTypes.STRING,
+    coverImage: DataTypes.STRING,
     province: DataTypes.STRING,
     district: DataTypes.STRING,
-    wards: DataTypes.STRING,
+    wards: DataTypes.STRING, 
+    birthday:DataTypes.STRING, 
     addressDetails:  DataTypes.STRING,
-    dateCreate: DataTypes.DATE,
+    token: DataTypes.STRING,
+    status: DataTypes.STRING,
+    
+    
   }, {
     sequelize,
     modelName: 'User',  
@@ -31,4 +36,3 @@ module.exports = (sequelize, DataTypes) => {
 };
 
 
-// manageId	permission	dateCreated	nameShop	addressShop	emailShop	phoneNumberShop	pay	province	likes

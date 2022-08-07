@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     pay: DataTypes.STRING,
     province: DataTypes.STRING,
     like: DataTypes.STRING,
-    dateCreate: DataTypes.DATE,
+    
   }, {
     sequelize,
     modelName: 'Items_size_amount',  

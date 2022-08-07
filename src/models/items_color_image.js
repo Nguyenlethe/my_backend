@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     color: DataTypes.STRING,
     image:  DataTypes.STRING,
     imageLink: DataTypes.STRING,
-    dateCreate: DataTypes.DATE,
+    
   }, {
     sequelize,
     modelName: 'Items_color_image',  

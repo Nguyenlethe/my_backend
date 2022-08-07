@@ -23,9 +23,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      address: {
-        type: Sequelize.STRING  
-      },
       gender: {
         type: Sequelize.STRING
       },
@@ -42,6 +39,12 @@ module.exports = {
       avataLink: {
         type: Sequelize.STRING
       },
+      birthday: {
+        type: Sequelize.STRING
+      },
+      coverImage: {
+        type: Sequelize.STRING
+      },
       province: {
         type: Sequelize.STRING
       },
@@ -54,7 +57,17 @@ module.exports = {
       addressDetails: {
         type: Sequelize.STRING
       },
-      dateCreate: {
+      token: {
+        type: Sequelize.STRING
+      },
+      status: {
+        type: Sequelize.STRING
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
       }

@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     production: DataTypes.STRING,
     sentFrom: DataTypes.STRING,
     texture: DataTypes.STRING,
-    dateCreate: DataTypes.DATE,
+    
   }, {
     sequelize,
     modelName: 'Items_info',  

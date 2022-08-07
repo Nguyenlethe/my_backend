@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     forItemCategory: DataTypes.STRING,
     forItemType: DataTypes.STRING,
     itemsId: DataTypes.INTEGER,
-    dateCreate: DataTypes.DATE,
+    
   }, {
     sequelize,
     modelName: 'items_discount',  
