@@ -14,12 +14,11 @@ function loginSystem(dataForm) {
         try{
             let isData = CheckDataDown(dataForm);
             if(isData.status === true){
+                
                 let res = await db.User.findOne({
                     where: {
                         email: dataForm.account,
                     },
-                   
-
                     attributes: {
                         exclude: ['phoneNumber','gender','district','wards']      
                     },
@@ -27,6 +26,9 @@ function loginSystem(dataForm) {
                 if(res){
                     let password = hashPassword(dataForm.password,res.password, 'login');
                     if(password){
+                        if(!res.permission){
+                            res.permission = 'R3'
+                        }
                         let role = hashPassword(res.permission);
                         resolve({
                             errCode: 0,
@@ -79,12 +81,17 @@ function forgotPassword(inputData) {
                 }
             })
             if(res){
+
                 let token = Math.floor(Math.random() * 10000);
+
                 await sendEmail.sendSimpleEmail({...inputData,fullName: `${res.firstName} ${res.lastName}`, token: token})
+
+
                 let addTokenDbUser = await db.User.update(
                     { token: token},
                     {where: {email: inputData.valueAccount}}
                 )
+                
                 if(addTokenDbUser){
                     resolve({
                         errCode: 0,
@@ -96,6 +103,15 @@ function forgotPassword(inputData) {
                         messages: 'The server is not responding'
                     })   
                 }
+            }else{
+                resolve({
+                    errCode: 1,
+                    messages: 'Email already exist',
+                    data: { account: {
+                        valueVi: 'Không tìm thấy account !!!',
+                        valueEn: 'Account not found',
+                    }}
+                })
             }
         }
         catch(err){
@@ -122,7 +138,7 @@ function updatePassword(data) {
                         messages: 'Token not found',
                         data: {
                             valueVi: 'Mã xác nhận không đúng !!!',
-                            valueVi: 'Incorrect code!!!'
+                            valueEn: 'Incorrect code!!!'
                         }
                     })
                 }
@@ -153,8 +169,53 @@ function updatePassword(data) {
     })
 }
 
+// Register
+function createNewUser(dataForm) {
+    return new Promise( async(resolve, reject) => {
+        try{
+            console.log('Du lieu xuong :',dataForm)
+
+            let isData = CheckDataDown(dataForm);
+            if(isData.status === true){
+                let res = await db.User.findOne({
+                    where: {email: dataForm.account}
+                })
+
+                console.log('Du lieu check DB :',res)
+
+                if(!res){
+
+                    let newPassword = hashPassword(dataForm.password);
+                    await db.User.create({
+                        permission: 'R3',
+                        email: dataForm.account,
+                        password: newPassword
+                    })
+
+                    resolve({
+                        errCode: 0,
+                        messages: 'OK',
+                    })
+
+                }else{
+                    resolve({
+                        errCode: 1,
+                        messages: 'Email already exist',
+                        data: { account: {
+                            valueVi: 'Email đã tồn tại !!!',
+                            valueEn: 'Email already exist'
+                        }}
+                    })
+                }
+            }
+        }
+        catch(err){
+            reject(err)
+        }
+    })
+}
 
 
 
 
-export default {updatePassword, loginSystem, forgotPassword}
+export default {updatePassword, loginSystem, forgotPassword,createNewUser}

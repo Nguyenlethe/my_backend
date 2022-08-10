@@ -2,13 +2,16 @@ import db from '../models/index'
 import _ from "lodash";
 
 // Check dữ liệu tạo ng dùng để tải lên Đb
-const validateCreateUser = async (dataUser) => {
+const validateCreateUser = async (dataUser, type) => {
     var checkEmail = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/; 
     var checkPasswor = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
     var checkPhone = /((09|03|07|08|05)+([0-9]{8})\b)/g;
     let listErr = {}
 
+    console.log(dataUser)
+
     if(!_.isEmpty(dataUser)){
+
         for(let key in dataUser) {
             if(dataUser[key].trim() === ''){
                 listErr[key] = {
@@ -39,16 +42,20 @@ const validateCreateUser = async (dataUser) => {
                     }
                 }
             }
-            if(key === 'password'){
-                if(dataUser[key].trim() !== ''){
-                    if(!checkPasswor.test(dataUser[key])){
-                        listErr[key] = {
-                            valueVi: `${key} không hợp lệ !!!`,
-                            valueEn: `${key} Invalid !!!`
+
+            if(type !== 'Shop'){
+                if(key === 'password'){
+                    if(dataUser[key].trim() !== ''){
+                        if(!checkPasswor.test(dataUser[key])){
+                            listErr[key] = {
+                                valueVi: `${key} không hợp lệ !!!`,
+                                valueEn: `${key} Invalid !!!`
+                            }
                         }
                     }
                 }
             }
+
             if(key === 'phoneNumber'){
                 if(dataUser[key].trim() !== ''){
                     if(!checkPhone.test(dataUser[key])){
@@ -60,10 +67,12 @@ const validateCreateUser = async (dataUser) => {
                 }
             }
             
-            if(dataUser.avata === undefined || null){
-                listErr.avata = {
-                    valueVi: `Avata Trống !!!`,
-                    valueEn: `Not empty Avata !!!`
+            if(type !== 'Shop'){
+                if(dataUser.avata === undefined || null){
+                    listErr.avata = {
+                        valueVi: `Avata Trống !!!`,
+                        valueEn: `Not empty Avata !!!`
+                    }
                 }
             }
         }

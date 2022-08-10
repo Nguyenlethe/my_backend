@@ -41,7 +41,22 @@ const updatePassword = async (req, res) => {
 
 
 
+// Update lại mật khẩu
+const createNewUser = async (req, res) => {
+    try{
+        let data = req.body
+        let ress = await appServices.createNewUser(data)
+        return res.status(200).json(ress)
+    }catch(e){
+        return res.status(200).json(e)
+    }
+}
+
+
+
+
 export default {
+    createNewUser,
     updatePassword,
     loginSystem,
     forgotPassword

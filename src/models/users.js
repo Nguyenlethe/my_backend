@@ -4,7 +4,15 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     
     static associate(models) {  
-   
+      User.belongsTo(models.Allcode, {foreignKey: 'gender',targetKey: 'keyMap', as : 'genderData'})
+      User.belongsTo(models.Allcode, {foreignKey: 'permission',targetKey: 'keyMap', as : 'permissionData'})
+      User.belongsTo(models.Province, {foreignKey: 'province',targetKey: 'keyMap', as : 'provinceData'})
+      User.belongsTo(models.Province, {foreignKey: 'district',targetKey: 'keyMap', as : 'districtData'})
+      User.belongsTo(models.Province, {foreignKey: 'wards',targetKey: 'keyMap', as : 'wardsData'})
+
+      User.hasOne(models.Store, {foreignKey: 'id',  as : 'FullName' })
+
+
     }
   };
   

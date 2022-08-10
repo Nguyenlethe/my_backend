@@ -4,6 +4,10 @@ module.exports = (sequelize, DataTypes) => {
   class Province extends Model {
 
     static associate(models) {  
+      Province.hasMany(models.User, { foreignKey: 'province', as : 'provinceData' })
+      Province.hasMany(models.User, { foreignKey: 'district', as : 'districtData' })
+      Province.hasMany(models.User, { foreignKey: 'wards', as : 'wardsData' })
+
  
     }
   };
