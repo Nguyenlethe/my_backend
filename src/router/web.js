@@ -18,16 +18,26 @@ function initWebRoutes(app) {
     
     router.get('/admin/get-all-user', adminController.getAllUsers)
     router.get('/admin/get-all-shop', adminController.getAllShop)
+    router.post('/admin/change-shop', adminController.changeShop)
 
-    
 
     router.delete('/admin/delete-shop', adminController.deleteShop)
-
     router.delete('/admin/delete-user', adminController.deleteUser)
     router.post('/admin/change-user', adminController.changeUser)
 
-
     
+    router.get('/admin/get-one-user', adminController.getOneShop)
+    router.post('/admin/change-shop-notIMG', adminController.changeShopNotImg)
+
+
+    router.post('/admin/create-new-items', adminController.addNewItems)
+
+    router.get('/admin/get-data-items', adminController.getDataItems)
+
+
+
+
+
     // APP
     router.post('/system/login', appController.loginSystem)
     router.post('/system/forgot-password', appController.forgotPassword)

@@ -8,21 +8,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Items_size_amount.init({
-    manageId: DataTypes.INTEGER,
-    permission: DataTypes.STRING,
-    nameShop:  DataTypes.STRING,
-    addressShop: DataTypes.STRING,
-    emailShop: DataTypes.STRING, 
-    phoneNumber: DataTypes.STRING,
-    pay: DataTypes.STRING,
-    province: DataTypes.STRING,
-    like: DataTypes.STRING,
-    
+    itemsId: DataTypes.STRING,
+    typeSize: DataTypes.STRING,
+    size:  DataTypes.STRING,
+    amount: DataTypes.INTEGER,
+
   }, {
     sequelize,
     modelName: 'Items_size_amount',  
   }); 
   return Items_size_amount;
 };
-
 

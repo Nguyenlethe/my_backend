@@ -6,11 +6,17 @@ module.exports = (sequelize, DataTypes) => {
   class Items_info extends Model {
     
     static associate(models) {  
+
+
+      Items_info.hasMany(models.Items, {foreignKey: 'idItems', as : 'infoItemsData'})
+
+      
+
    
     }
   };
   Items_info.init({
-    itemsId: DataTypes.INTEGER,
+    itemsId: DataTypes.STRING,
     describeHtmlEn: DataTypes.TEXT,
     describeTextEn: DataTypes.TEXT,
     describeHtmlVi: DataTypes.TEXT,

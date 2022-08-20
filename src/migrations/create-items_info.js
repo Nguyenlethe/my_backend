@@ -10,7 +10,7 @@ module.exports = {
       },
       itemsId: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       describeHtmlEn: {
         type: Sequelize.STRING
@@ -34,7 +34,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       texture: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

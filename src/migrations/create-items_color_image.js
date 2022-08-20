@@ -10,7 +10,7 @@ module.exports = {
       },
       itemId: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       color: {
         type: Sequelize.STRING

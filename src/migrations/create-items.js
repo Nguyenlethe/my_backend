@@ -8,6 +8,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      idItems: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       idShop: {
         allowNull: false,
         type: Sequelize.INTEGER

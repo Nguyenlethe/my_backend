@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       Store.belongsTo(models.User, {foreignKey: 'manageId',targetKey: 'id', as : 'FullName'})
     }
   };
-  Store.init({
+  Store.init({   
     manageId: DataTypes.INTEGER,
     permission: DataTypes.STRING,
     nameShop:  DataTypes.STRING,

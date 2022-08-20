@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Items_color_image.init({
-    itemId: DataTypes.INTEGER,
+    itemId: DataTypes.STRING,
     color: DataTypes.STRING,
     image:  DataTypes.STRING,
     imageLink: DataTypes.STRING,

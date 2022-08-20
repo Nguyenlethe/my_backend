@@ -27,7 +27,6 @@ const forgotPassword = async (req, res) => {
 
 
 
-
 // Update lại mật khẩu
 const updatePassword = async (req, res) => {
     try{

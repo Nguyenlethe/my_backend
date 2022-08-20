@@ -14,7 +14,6 @@ function loginSystem(dataForm) {
         try{
             let isData = CheckDataDown(dataForm);
             if(isData.status === true){
-                
                 let res = await db.User.findOne({
                     where: {
                         email: dataForm.account,
@@ -75,15 +74,19 @@ function forgotPassword(inputData) {
                     messages: 'Email Not Empty'
                 })
             }
+
             let res = await db.User.findOne({
                 where: {
                     email: inputData.valueAccount,
                 }
             })
+
             if(res){
 
-                let token = Math.floor(Math.random() * 10000);
 
+                console.log(res)
+
+                let token = Math.floor(Math.random() * 10000);
                 await sendEmail.sendSimpleEmail({...inputData,fullName: `${res.firstName} ${res.lastName}`, token: token})
 
 
@@ -214,6 +217,8 @@ function createNewUser(dataForm) {
         }
     })
 }
+
+
 
 
 
