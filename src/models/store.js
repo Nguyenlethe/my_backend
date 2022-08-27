@@ -8,7 +8,11 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {  
+
       Store.belongsTo(models.User, {foreignKey: 'manageId',targetKey: 'id', as : 'FullName'})
+      Store.hasMany(models.Items, {foreignKey: 'manageId', as: 'storeData'})
+
+      // manageId
     }
   };
   Store.init({   

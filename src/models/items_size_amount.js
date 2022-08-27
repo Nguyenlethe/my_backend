@@ -4,6 +4,16 @@ module.exports = (sequelize, DataTypes) => {
   class Items_size_amount extends Model {
     
     static associate(models) {  
+
+
+
+      Items_size_amount.belongsTo(models.Size, {foreignKey: 'size',targetKey: 'code', as : 'sizeData'})
+      Items_size_amount.belongsTo(models.Type_size, {foreignKey: 'typeSize',targetKey: 'code', as : 'typeSizeData'})
+
+
+
+
+      
    
     }
   };

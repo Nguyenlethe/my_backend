@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
 
 
       Items_info.hasMany(models.Items, {foreignKey: 'idItems', as : 'infoItemsData'})
+      Items_info.belongsTo(models.Trademark, {foreignKey: 'trademark', targetKey: 'code',as : 'trademarkData'})
 
       
 

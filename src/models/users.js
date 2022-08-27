@@ -5,8 +5,13 @@ module.exports = (sequelize, DataTypes) => {
     
     static associate(models) {  
       
-      User.belongsTo(models.Allcode, {foreignKey: 'gender',targetKey: 'keyMap', as : 'genderData'})
-      User.belongsTo(models.Allcode, {foreignKey: 'permission',targetKey: 'keyMap', as : 'permissionData'})
+
+      // User.belongsTo(models.Allcode, {foreignKey: 'gender',targetKey: 'keyMap', as : 'genderData'})
+      // User.belongsTo(models.Allcode, {foreignKey: 'permission',targetKey: 'keyMap', as : 'permissionData'})
+
+      User.belongsTo(models.Gender, {foreignKey: 'gender',targetKey: 'keyMap', as : 'genderData'})
+      User.belongsTo(models.Role, {foreignKey: 'permission',targetKey: 'keyMap', as : 'permissionData'})
+      
       User.belongsTo(models.Province, {foreignKey: 'province',targetKey: 'keyMap', as : 'provinceData'})
       User.belongsTo(models.Province, {foreignKey: 'district',targetKey: 'keyMap', as : 'districtData'})
       User.belongsTo(models.Province, {foreignKey: 'wards',targetKey: 'keyMap', as : 'wardsData'})

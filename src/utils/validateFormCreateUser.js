@@ -1,5 +1,5 @@
 import db from '../models/index'
-import _ from "lodash";
+import _, { constant } from "lodash";
 
 // Check dữ liệu tạo ng dùng để tải lên Đb
 const validateCreateUser = async (dataUser, type) => {
@@ -22,13 +22,13 @@ const validateCreateUser = async (dataUser, type) => {
                 }
             }
 
+
             if(key === 'price'){
-                if( Number(dataUser[key]) !== NaN){
-                    if(!checkEmail.test(dataUser[key])){
-                        listErr[key] = {
-                            valueVi: `${key} không hợp lệ !!!`,
-                            valueEn: `${key} Invalid !!!`
-                        }
+
+                if(Number(dataUser[key]) + 0 === NaN){
+                    listErr[key] = {
+                        valueVi: `${key} không hợp lệ !!!`,
+                        valueEn: `${key} Invalid !!!`
                     }
                 }
             }

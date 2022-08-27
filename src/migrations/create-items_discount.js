@@ -10,6 +10,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+
       idShop: {
         allowNull: false,
         type: Sequelize.INTEGER
@@ -20,10 +21,10 @@ module.exports = {
       unitPrice: {
         type: Sequelize.STRING
       },
-      dayDiscount: {
+      dayEnd: {
         type: Sequelize.STRING
       },
-      userConditions: {
+      dayStart: {
         type: Sequelize.STRING  
       },
       forItemCategory: {

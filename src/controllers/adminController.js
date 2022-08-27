@@ -142,7 +142,6 @@ const createNewShop = async (req, res) => {
     }
 }
 
-
 // Xl lấy User
 const getAllUsers = async (req, res) => {
     try{
@@ -155,7 +154,6 @@ const getAllUsers = async (req, res) => {
     }
 }
 
-
 // Xl lấy Shop
 const getAllShop = async (req, res) => {
     try{
@@ -167,7 +165,6 @@ const getAllShop = async (req, res) => {
     }
 }
 
-
 // Xl delete
 const deleteUser = async (req, res) => {
     try{
@@ -177,7 +174,6 @@ const deleteUser = async (req, res) => {
         return res.status(200).json(err)
     }
 }
-
 
 // Xl delete
 const deleteShop = async (req, res) => {
@@ -190,7 +186,6 @@ const deleteShop = async (req, res) => {
     }
 }
 
-
 // Xl Change USer
 const changeUser = async (req, res) => {
     try{
@@ -200,7 +195,6 @@ const changeUser = async (req, res) => {
         return res.status(200).json(err)
     }
 }
-
 
 // Xl change dữ liệu shop + img 
 const changeShop = async (req, res) => {
@@ -238,7 +232,6 @@ const changeShop = async (req, res) => {
     }
 }
 
-
 // Xl Change dữ liệu shop - img 
 const changeShopNotImg = async (req, res) => {
     try{
@@ -249,7 +242,6 @@ const changeShopNotImg = async (req, res) => {
         return res.status(200).json(err)
     }
 }
-
 
 // Get one user
 const getOneShop = async (req, res) => {
@@ -262,23 +254,13 @@ const getOneShop = async (req, res) => {
     }
 }
 
-
 // Create items
 const addNewItems = async (req, res) => {
     try{
 
-        let upload = multer({ storage: storageImgItems, fileFilter: imageFilterImgItems }).array('file',10);  
+        let upload = multer({ storage: storageImgItems, fileFilter: imageFilterImgItems }).array('file',12);  
         upload(req, res, async (err) => {
             if(!req.file){
-
-                let dataItemsColorImgages =  JSON.parse(req.body.dataItemsColorImgages)
-                let dataItems =  JSON.parse(req.body.dataItems)
-                let dataItemsInfo = JSON.parse(req.body.dataItemsInfo)
-                let datItemsSizeAmount = JSON.parse(req.body.datItemsSizeAmount)
-
-
-
-
 
             }
             if(!err) {
@@ -374,7 +356,6 @@ const addNewItems = async (req, res) => {
     }
 }
 
-
 // Xl lấy Dl select from (Gender, Province,Permission )
 const getDataItems = async (req, res) => {
     try{
@@ -386,9 +367,125 @@ const getDataItems = async (req, res) => {
     }
 }
 
+// Xoa items
+const deleteItems = async (req, res) => {
+    try{
+        console.log('idItems Xoa',req.body.id)
+        let data = await adminServices.deleteItems(req.body.id)
+        return res.status(200).json(data)
+    }catch(e){
+        return res.status(200).json(e)
+    }
+}
+
+// Xl change items
+const editDataItems = async (req, res) => {
+    try{
+        let upload = multer({ storage: storageImgItems, fileFilter: imageFilterImgItems }).array('file',12);  
+        upload(req, res, async (err) => {
+        try{
+            if(!err){
+                try{
+
+                    // lấy data truyền xuống
+                    let arrayImgItems = [...req.files]
+                    let data =  {
+                        dataImgFile: arrayImgItems, 
+                        dataItems: JSON.parse(req.body.dataItems), 
+                        dataItemsInfo: JSON.parse(req.body.dataItemsInfo),
+                        dataItemsColorImgages: JSON.parse(req.body.dataItemsColorImgages),
+                        dataItemsSizeAmount: JSON.parse(req.body.dataItemsSizeAmount),
+                    }
+
+                    // Kiểm tra dữ liệu 
+                    let newData = await validateCreateUser({...data.dataItems ,...data.dataItemsInfo} , 'items')
+
+                    // không lỗi gửi đi để update
+                    if(_.isEmpty(newData)){
+                        let dataRes = await adminServices.editItems(data)
+                        if(dataRes.errCode === -1){
+                            arrayImgItems.length > 0 && arrayImgItems.map(img => {
+                                fs.rmSync(`src/public/images/Items/${img.filename}`, {
+                                    force: true,
+                                });
+                            })
+                        }
+                        return res.status(200).json(dataRes)
+                    }
+
+                    // Xóa img nếu có lỗi
+                    arrayImgItems.length > 0 && arrayImgItems.map(img => {
+                        fs.rmSync(`src/public/images/Items/${img.filename}`, {
+                            force: true,
+                        });
+                    })
+
+                    return res.status(200).json({
+                        errCode: -1,
+                        errMessage: 'Error data !!!',
+                        data: newData
+                    }
+                    )
+
+                }catch(err){
+                    return res.status(200).json(err)
+                }
+            }else{
+                return res.status(200).json({
+                    errCode: -1,
+                    errMessage: 'An error occurred',
+                })
+            }
+        }catch(err) {
+            return res.status(200).json(err)
+        }})
+    }catch(err){
+        return res.status(200).json(err)
+    }
+}
+
+
+// Get items where
+const getItemsWhere = async (req, res) => {
+    try{
+        let data = await adminServices.getItemsWhere({type: req.query.type, category: req.query.category})
+        return res.status(200).json(data)
+    }catch(err){
+        return res.status(200).json(err)
+    }
+}
+
+
+// Get data discount
+const getAllDiscountItems = async (req, res) => {
+    try{
+        let data = await adminServices.getAllDiscountItems(req.query.type)
+        return res.status(200).json(data)
+    }catch(err){
+        return res.status(200).json(err)
+    }
+}
+
+
+// Get data discount
+const searchItems = async (req, res) => {
+    try{
+        let dataClient = req.query
+        let data = await adminServices.searchItems(dataClient)
+        return res.status(200).json(data)
+    }catch(err){
+        return res.status(200).json(err)
+    }
+}
+
 
 
 export default {
+    searchItems,
+    getAllDiscountItems,
+    getItemsWhere,
+    editDataItems,
+    deleteItems,
     getDataItems,
     addNewItems,
     getOneShop,

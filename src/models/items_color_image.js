@@ -4,7 +4,13 @@ module.exports = (sequelize, DataTypes) => {
   class Items_color_image extends Model {
     
     static associate(models) {  
-   
+      
+      Items_color_image.belongsTo(models.Color, {foreignKey: 'color',targetKey: 'code', as : 'colorData'})
+
+      Items_color_image.hasMany(models.Items, {foreignKey: 'idItems', as : 'dataImgItems'})
+      
+     
+
     }
   };
   Items_color_image.init({
