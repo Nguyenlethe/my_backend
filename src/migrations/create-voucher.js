@@ -1,27 +1,32 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('voucher_items', {
+    await queryInterface.createTable('vouchers', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      voucherItemsId: {
+      idVoucher: {
+        allowNull: false,
         type: Sequelize.STRING
       },
-      idCreateVoucher: {
+      idUserCreate: {
+        allowNull: false,
         type: Sequelize.STRING
       },
-      codeVoucher: {
+      codeVocher: {
+        allowNull: false,
         type: Sequelize.STRING
       },
-      priceLimitVND: {
-        type: Sequelize.INTEGER
+      limitVn: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
-      priceLimitUSD: {
-        type: Sequelize.INTEGER
+      limitUs: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -34,12 +39,8 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('voucher_items');
+    await queryInterface.dropTable('vouchers');
   }
 };
-
-
-
-
 
 

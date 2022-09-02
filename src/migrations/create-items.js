@@ -38,7 +38,13 @@ module.exports = {
       price: {
         type: Sequelize.INTEGER
       },
+      priceUS: {
+        type: Sequelize.INTEGER
+      },
       newPrice: {
+        type: Sequelize.INTEGER
+      },
+      newPriceUS: {
         type: Sequelize.INTEGER
       },
       createdAt: {

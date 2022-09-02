@@ -15,7 +15,7 @@ const validateCreateUser = async (dataUser, type) => {
 
         for(let key in dataUser) {
 
-            if(dataUser[key] === '' && key !== 'newPrice' && key !== 'production' && key !== 'texture' && key !== 'sale' && key !== 'discount'){
+            if(dataUser[key] === '' && key !== 'newPrice' && key !== 'production' && key !== 'texture' && key !== 'sale' && key !== 'discount' && key !== 'newPriceUS'){
                 listErr[key] = {
                     valueVi: `Không được để trống ${key} !!!`,
                     valueEn: `Not empty ${key} !!!`
@@ -24,7 +24,6 @@ const validateCreateUser = async (dataUser, type) => {
 
 
             if(key === 'price'){
-
                 if(Number(dataUser[key]) + 0 === NaN){
                     listErr[key] = {
                         valueVi: `${key} không hợp lệ !!!`,

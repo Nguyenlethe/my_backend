@@ -448,7 +448,8 @@ const editDataItems = async (req, res) => {
 // Get items where
 const getItemsWhere = async (req, res) => {
     try{
-        let data = await adminServices.getItemsWhere({type: req.query.type, category: req.query.category})
+        if(!req.query.idShop || !req.query.category){return res.status(200).json({errCode: -1, errMessage: 'Not type data !'})}
+        let data = await adminServices.getItemsWhere({idShop: req.query.idShop ,type: req.query.type, category: req.query.category})
         return res.status(200).json(data)
     }catch(err){
         return res.status(200).json(err)
@@ -459,7 +460,8 @@ const getItemsWhere = async (req, res) => {
 // Get data discount
 const getAllDiscountItems = async (req, res) => {
     try{
-        let data = await adminServices.getAllDiscountItems(req.query.type)
+        let type = req.query.type
+        let data = await adminServices.getAllDiscountItems(type)
         return res.status(200).json(data)
     }catch(err){
         return res.status(200).json(err)

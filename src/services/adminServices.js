@@ -494,7 +494,6 @@ function deleteShop(data){
 }
 
 
-
 // API sửa user
 function changeUser(data){
     return new Promise(async(resolve, reject) =>{
@@ -709,7 +708,9 @@ function addNewItems(data){
                     name: data.items.name ,
                     nameEn: data.items.nameEn ,
                     price: data.items.price ,
+                    priceUS: data.items.priceUS ,
                     newPrice: data.items.newPrice ? data.items.newPrice  : '',
+                    newPrice: data.items.newPriceUS ? data.items.newPriceUS  : '',
                 })
                 
 
@@ -943,21 +944,24 @@ function deleteItems(id){
     })
 }
 
-// Add all Thoong tin items
+// EDIT all Thoong tin items
 function editItems(data){
     return new Promise(async(resolve, reject) =>{
         try{
             
             // Nếu sửa ảnh 
             if(data && data.dataImgFile.length > 0 && data.dataItemsColorImgages.length > 0){
+
                 // Set name img file 
                 data.dataItemsColorImgages.map(img => {
                     data.dataImgFile.map(imgFile => {
                         if(img.image === imgFile.originalname){
+                            console.log(imgFile.filename, img.image)
                             img.image = imgFile.filename
                         }
                     })
                 })
+                
 
                 let imgOld = await db.Items_color_image.findAll({where: {itemId: data.dataItemsColorImgages[0].itemId},attributes: ['image']})
                 // Lấy ra img cũ
@@ -967,7 +971,7 @@ function editItems(data){
                 // lấy ra img mới
                 let dataImgNew = [] 
                 data.dataItemsColorImgages.map(item => dataImgNew.push(item))
-                
+           
                 // Lấy ra img thay đổi
                 let dataImgNewSave = dataImgNew
                 let dataImgOlddalete = dataImgOld
@@ -984,8 +988,10 @@ function editItems(data){
                     })
                 })
 
+
                 // Xóa ảnh cũ
                 let imgDelete = dataImgOlddalete.filter(item => item.trim() !== '')
+                console.log('Ảnh Xóa',imgDelete)
                 imgDelete.length > 0 && imgDelete.map(img => {
                     fs.rmSync(`src/public/images/Items/${img}`, {
                         force: true,
@@ -1011,7 +1017,7 @@ function editItems(data){
             // Lấy ra giá cũ
             let oldDataPrice = await db.Items.findOne({ 
                 where: {idItems: data.dataItems.idItems},
-                attributes: ['price'],     
+                attributes: ['price','priceUS'],     
             })
 
             // updata data items
@@ -1026,7 +1032,9 @@ function editItems(data){
                     name: data.dataItems.name,
                     nameEn: data.dataItems.nameEn,
                     price: oldDataPrice.price,
+                    priceUS: oldDataPrice.priceUS,
                     newPrice: data.dataItems.newPrice,
+                    newPriceUS: data.dataItems.newPriceUS,
                 },
                 {where :{idItems: data.dataItems.idItems}}
             )
@@ -1119,12 +1127,77 @@ function editItems(data){
 function getItemsWhere(data){
     return new Promise(async(resolve, reject) =>{
         try{
-            console.log('data xuoonsg :',data)
-
+            console.log(data)
             if(!_.isEmpty(data)){
-                let res = await db.Items.findAll({
-                    where: {category: data.category, type: data.type}
-                })
+                let res  = []
+
+                // Truyền đầy đủ thông tin category !== All
+                if(data.idShop && data.category && data.type && data.category !== 'All'){
+                    res = await db.Items.findAll({
+                        where: {
+                            idShop: data.idShop,
+                            category: data.category, 
+                            type: data.type
+                        },
+                        include: [
+                            {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
+                        ],
+                        group: ['idItems'],
+                        limit : 30,
+                        raw : true, 
+                        nest: true 
+                    })
+                }
+
+                // Không truyền type và Category !== All
+                if(data.type === 'none' && data.category !== 'All'){
+                    res = await db.Items.findAll({
+                        where: {
+                            idShop: data.idShop,
+                            category: data.category
+                        },
+                        include: [
+                            {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
+                        ],
+                        group: ['idItems'],
+                        limit : 30,
+                        raw : true, 
+                        nest: true 
+                    })
+                }
+
+                // Không truyền type, category === 'All
+                if(data.type === 'none' && data.category === 'All'){
+                    res = await db.Items.findAll({
+                        where: {
+                            idShop: data.idShop
+                        },
+                        include: [
+                            {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
+                        ],
+                        group: ['idItems'],
+                        limit : 30,
+                        raw : true, 
+                        nest: true 
+                    })
+                }
+
+                // Truyền type !== none, category === 'All'
+                if(data.type !== 'none' && data.category === 'All'){
+                    res = await db.Items.findAll({
+                        where: {
+                            idShop: data.idShop,
+                            type: data.type
+                        },
+                        include: [
+                            {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
+                        ],
+                        group: ['idItems'],
+                        limit : 30,
+                        raw : true, 
+                        nest: true 
+                    })
+                }
 
                 resolve({
                     errCode: 0,
@@ -1144,43 +1217,41 @@ function getItemsWhere(data){
     })
 }
 
-
-// Get items where
+// Get data voucher
 function getAllDiscountItems(type){
     return new Promise(async(resolve, reject) =>{
         try{
+            console.log('data xuoonsg :',type)
+
             if(!type){
                 resolve({
                     errCode: -1,
-                    errMessage: 'Type error !!!'
+                    errMessage: 'Not type !!!'
                 })
             }
-
-            let dataDiscount = await db.Voucher_items.findAll({
-                where: {idCreateVoucher: type}
+            let voucher = await db.Voucher.findAll({
+                where: {idUserCreate: type}
             })
 
-            if(!dataDiscount) {
+            if(!voucher){
                 resolve({
-                    errCode: 2,
-                    errMessage: 'Not get data type All',
-                    data: []
+                    errCode: -2,
+                    errMessage: 'Not data voucher !!!'
                 })
             }
 
-            
             resolve({
                 errCode: 0,
                 errMessage: 'OK',
-                data: dataDiscount
+                data: voucher
             })
+    
         }
         catch(error){
             reject('Error reject :',error)
         }
     })
 }
-
 
 // Get items where
 function searchItems(data){
@@ -1198,6 +1269,8 @@ function searchItems(data){
             if(table === 'Items'){
                 if(type === 'idItems'){
 
+                    console.log(value,idShop)
+
                     let dataRes = await db.Items.findAll({
                         where: {
                             idShop: idShop,
@@ -1213,8 +1286,6 @@ function searchItems(data){
                         nest: true 
                     })
 
-                    console.log(dataRes)
-
                     if(dataRes.length === 0){
                         resolve({
                             errCode: -2,
@@ -1227,7 +1298,6 @@ function searchItems(data){
                         errMessage: 'OK',
                         data: dataRes
                     })
-                    
                 }
             }
 
