@@ -27,8 +27,6 @@ const imageFilterAvata = function(req, file, cb) {
 }
 
 
-
-
 // Lưu file,tên file
 const storageAvataShop = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -41,8 +39,6 @@ const storageAvataShop = multer.diskStorage({
 })
 
 
-
-
 // Kiểm tra xem tải đúng file không
 const imageFilterAvataShop = function(req, file, cb) {
     // Nếu mà name file không match với các đôi file trên này thì sẽ báo lỗi ra
@@ -52,8 +48,6 @@ const imageFilterAvataShop = function(req, file, cb) {
     }
     cb(null, true);
 }
-
-
 
 // Lưu file,tên file
 const storageImgItems = multer.diskStorage({
@@ -67,8 +61,6 @@ const storageImgItems = multer.diskStorage({
 })
 
 
-
-
 // Kiểm tra xem tải đúng file không
 const imageFilterImgItems = function(req, file, cb) {
     // Nếu mà name file không match với các đôi file trên này thì sẽ báo lỗi ra
@@ -78,6 +70,7 @@ const imageFilterImgItems = function(req, file, cb) {
     }
     cb(null, true);
 }
+
 
 
 

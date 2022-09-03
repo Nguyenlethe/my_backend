@@ -10,7 +10,6 @@ import _ from "lodash";
 // Xl lấy Dl select from (Gender, Province,Permission )
 const getDataAllcode = async (req, res) => {
     try{
-        console.log(req.query.type)
         let data = await adminServices.getDataAllcodes(req.query.type)
         return res.status(200).json(data)
     }catch(e){
@@ -60,10 +59,7 @@ const createNewUser = async (req, res) => {
             }
             if(!err) {
                 try{
-                    console.log(req.body.dataUser)
                     let data = JSON.parse(req.body.dataUser);
-                    console.log(data)
-                    console.log(req.file)
                     data.avata = req.file ? req.file.filename : '';
                     let newData = await validateCreateUser(data)
 
@@ -115,7 +111,6 @@ const createNewShop = async (req, res) => {
                     let data = JSON.parse(req.body.shopData);
                     data.avata = req.file ? req.file.filename : '';
                     let newData = await validateCreateUser(data)
-                console.log(newData)
 
                     if(_.isEmpty(newData)) {
                         let dataRes = await adminServices.createNewShop(data)
@@ -124,7 +119,6 @@ const createNewShop = async (req, res) => {
                         fs.rmSync(`src/public/images/AvataShop/${req.file.filename}`, {
                             force: true,
                         });
-                console.log(newData)
 
                         return res.status(200).json({
                             errCode: -1,
@@ -145,9 +139,7 @@ const createNewShop = async (req, res) => {
 // Xl lấy User
 const getAllUsers = async (req, res) => {
     try{
-
         let data = await adminServices.getAllUsers(req.query.type)
-
         return res.status(200).json(data)
     }catch(err){
         return res.status(200).json(err)
@@ -157,7 +149,6 @@ const getAllUsers = async (req, res) => {
 // Xl lấy Shop
 const getAllShop = async (req, res) => {
     try{
-        console.log(req.query.type)
         let data = await adminServices.getAllShops(req.query.type)
         return res.status(200).json(data)
     }catch(err){
@@ -178,7 +169,6 @@ const deleteUser = async (req, res) => {
 // Xl delete
 const deleteShop = async (req, res) => {
     try{
-        console.log(req.body)
         let data = await adminServices.deleteShop(req.body)
         return res.status(200).json(data)
     }catch(err){
@@ -235,7 +225,6 @@ const changeShop = async (req, res) => {
 // Xl Change dữ liệu shop - img 
 const changeShopNotImg = async (req, res) => {
     try{
-        console.log(req.body)
         let data = await adminServices.changeShopNotImg(req.body)
         return res.status(200).json(data)
     }catch(err){
@@ -246,7 +235,6 @@ const changeShopNotImg = async (req, res) => {
 // Get one user
 const getOneShop = async (req, res) => {
     try{
-        console.log(req.query.id)
         let data = await adminServices.getOneShop(req.query.id)
         return res.status(200).json(data)
     }catch(err){
@@ -257,7 +245,6 @@ const getOneShop = async (req, res) => {
 // Create items
 const addNewItems = async (req, res) => {
     try{
-
         let upload = multer({ storage: storageImgItems, fileFilter: imageFilterImgItems }).array('file',12);  
         upload(req, res, async (err) => {
             if(!req.file){
@@ -359,7 +346,6 @@ const addNewItems = async (req, res) => {
 // Xl lấy Dl select from (Gender, Province,Permission )
 const getDataItems = async (req, res) => {
     try{
-        console.log('Get data Items',req.query.type)
         let data = await adminServices.getDataItems(req.query.type)
         return res.status(200).json(data)
     }catch(e){
@@ -370,7 +356,6 @@ const getDataItems = async (req, res) => {
 // Xoa items
 const deleteItems = async (req, res) => {
     try{
-        console.log('idItems Xoa',req.body.id)
         let data = await adminServices.deleteItems(req.body.id)
         return res.status(200).json(data)
     }catch(e){
@@ -481,8 +466,20 @@ const searchItems = async (req, res) => {
 }
 
 
+// Get data discount
+const createNewDiscounts = async (req, res) => {
+    try{
+        let dataClient = req.body
+        let data = await adminServices.createNewDiscounts(dataClient)
+        return res.status(200).json(data)
+    }catch(err){
+        return res.status(200).json(err)
+    }
+}
+
 
 export default {
+    createNewDiscounts,
     searchItems,
     getAllDiscountItems,
     getItemsWhere,

@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Voucher extends Model {
 
     static associate(models) {  
+      Voucher.hasMany(models.Items_discount, {foreignKey: 'unitPrice'})
 
     }
   };

@@ -16,7 +16,6 @@ function initWebRoutes(app) {
     router.get('/admin/get-all-user', adminController.getAllUsers)
     router.get('/admin/get-all-shop', adminController.getAllShop)
     router.get('/admin/get-one-user', adminController.getOneShop)
-    
     router.get('/admin/get-data-items', adminController.getDataItems)
     
     router.delete('/admin/delete-user', adminController.deleteUser)
@@ -29,8 +28,9 @@ function initWebRoutes(app) {
     router.post('/admin/change-shop-notIMG', adminController.changeShopNotImg)
     router.post('/admin/create-new-items', adminController.addNewItems)
     router.post('/admin/delete-items', adminController.deleteItems)
-
     router.post('/admin/change-items', adminController.editDataItems)
+    router.post('/admin/create-new-discount', adminController.createNewDiscounts)
+
     router.get('/admin/get-all-items-where', adminController.getItemsWhere)
     router.get('/admin/get-data-discount', adminController.getAllDiscountItems)
     router.get('/admin/search-data-items', adminController.searchItems)

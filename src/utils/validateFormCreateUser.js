@@ -9,13 +9,20 @@ const validateCreateUser = async (dataUser, type) => {
     var checkPhone = /((09|03|07|08|05)+([0-9]{8})\b)/g;
     let listErr = {}
 
-   console.log(dataUser)
 
     if(!_.isEmpty(dataUser)){
-
         for(let key in dataUser) {
-
-            if(dataUser[key] === '' && key !== 'newPrice' && key !== 'production' && key !== 'texture' && key !== 'sale' && key !== 'discount' && key !== 'newPriceUS'){
+            if(
+                dataUser[key] === '' &&
+                key !== 'newPrice' && 
+                key !== 'production' && 
+                key !== 'texture' && 
+                key !== 'sale' && 
+                key !== 'discount' && 
+                key !== 'newPriceUS' && 
+                key !== 'forItemType' &&
+                key !== 'itemsId' 
+                ){
                 listErr[key] = {
                     valueVi: `Không được để trống ${key} !!!`,
                     valueEn: `Not empty ${key} !!!`
@@ -80,7 +87,7 @@ const validateCreateUser = async (dataUser, type) => {
                 }
             }
             
-            if(type !== 'Shop' && type !== 'items'){
+            if(type !== 'Shop' && type !== 'items' && type !== 'CREATE_DISCOUNT'){
                 if(dataUser.avata === undefined || null){
                     listErr.avata = {
                         valueVi: `Avata Trống !!!`,
@@ -89,7 +96,6 @@ const validateCreateUser = async (dataUser, type) => {
                 }
             }
 
-            
             if(dataUser.type === 'EditIMG'){
                 if(key === 'emailShop'){
                     if(dataUser[key] !== ''){
@@ -102,9 +108,6 @@ const validateCreateUser = async (dataUser, type) => {
                     }
                 }
             }
-
-
-            
 
         }
         return listErr

@@ -1,13 +1,15 @@
 'use strict';
 const {Model} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class items_discount extends Model {
+  class Items_discount extends Model {
     
     static associate(models) {  
-   
+      Items_discount.belongsTo(models.Discount, {foreignKey: 'codeReduce', targetKey: 'code'})
+      Items_discount.belongsTo(models.Voucher, {foreignKey: 'unitPrice', targetKey: 'codeVocher'})
+
     }
   };
-  items_discount.init({
+  Items_discount.init({
     idShop: DataTypes.INTEGER,
     codeReduce: DataTypes.STRING,
     unitPrice: DataTypes.STRING,
@@ -15,13 +17,13 @@ module.exports = (sequelize, DataTypes) => {
     dayEnd: DataTypes.STRING, 
     forItemCategory: DataTypes.STRING,
     forItemType: DataTypes.STRING,
-    itemsId: DataTypes.INTEGER,
+    itemsId: DataTypes.STRING,
     
   }, {
     sequelize,
-    modelName: 'items_discount',  
+    modelName: 'Items_discount',  
   }); 
-  return items_discount;
+  return Items_discount;
 };
 
 
