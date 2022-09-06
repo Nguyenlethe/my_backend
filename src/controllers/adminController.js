@@ -478,7 +478,19 @@ const createNewDiscounts = async (req, res) => {
 }
 
 
+// Get data discount
+const getVoucher = async (req, res) => {
+    try{
+        let dataClient = req.query
+        let data = await adminServices.getVoucher(dataClient)
+        return res.status(200).json(data)
+    }catch(err){
+        return res.status(200).json(err)
+    }
+}
+
 export default {
+    getVoucher,
     createNewDiscounts,
     searchItems,
     getAllDiscountItems,

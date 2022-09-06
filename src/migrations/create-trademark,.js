@@ -11,6 +11,9 @@ module.exports = {
       trademarkId: {
         type: Sequelize.STRING
       },
+      idUserCreate: {
+        type: Sequelize.STRING
+      },
       code: {
         type: Sequelize.STRING
       },

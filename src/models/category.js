@@ -6,12 +6,17 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {  
 
       Category.hasMany(models.Items, {foreignKey: 'category', as : 'categoryData'})
+
+      Category.hasMany(models.Items_discount, {foreignKey: 'forItemCategory'})
+
+
      
 
     }
   };
   Category.init({
-    categoryId:  DataTypes.STRING,
+    categoryId: DataTypes.STRING,
+    idUserCreate: DataTypes.STRING,
     code: DataTypes.STRING,
     valueEn: DataTypes.STRING,
     valueVi: DataTypes.STRING,

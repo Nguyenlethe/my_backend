@@ -11,6 +11,9 @@ module.exports = {
       categoryId: {
         type: Sequelize.STRING
       },
+      idUserCreate: {
+        type: Sequelize.STRING
+      },
       code: {
         type: Sequelize.STRING
       },

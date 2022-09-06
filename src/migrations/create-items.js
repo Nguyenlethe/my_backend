@@ -36,15 +36,19 @@ module.exports = {
         type: Sequelize.STRING
       },
       price: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       priceUS: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       newPrice: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       newPriceUS: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       createdAt: {

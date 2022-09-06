@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   Color.init({
     colorId:  DataTypes.STRING,
+    idUserCreate: DataTypes.STRING,
     code: DataTypes.STRING,
     valueEn: DataTypes.STRING,
     valueVi: DataTypes.STRING,

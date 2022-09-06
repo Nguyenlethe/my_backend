@@ -11,6 +11,11 @@ module.exports = {
       colorId: {
         allowNull: false,
         type: Sequelize.STRING
+      }
+      ,
+      idUserCreate: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       code: {
         allowNull: false,

@@ -3,6 +3,7 @@ import _ from 'lodash'
 import hashPassword from '../utils/hashPassword'
 import validateCreateUser from "../utils/validateFormCreateUser";
 import generalHandling from '../utils/generalHandling';
+import CheckDataDown from '../utils/CheckDataDown';
 const { Op } = require("sequelize");
 var fs = require('fs');
 
@@ -785,7 +786,6 @@ function getDataItems(inputType){
     return new Promise(async(resolve, reject) =>{
         try{
             let data = {}
-
             if(inputType === 'All'){
 
                 // Lấy thông tin items
@@ -813,6 +813,7 @@ function getDataItems(inputType){
                     nest: true 
                 })
 
+
                 // Lấy ra danh sách id items
                 let itemsCoppy = data.inputType.map(item => {
                     return item.idItems
@@ -833,7 +834,6 @@ function getDataItems(inputType){
                     raw : true, 
                     nest: true 
                 })
-
 
                 // Lấy ra size + amount 
                 let dataSizeAmount = await db.Items_size_amount.findAll({
@@ -1258,7 +1258,6 @@ function searchItems(data){
 
             if(table === 'Items'){
                 if(type === 'idItems'){
-
                     console.log(value,idShop)
 
                     let dataRes = await db.Items.findAll({
@@ -1271,7 +1270,7 @@ function searchItems(data){
                         include: [
                             {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
                         ],
-                        group: ['idShop'],
+                        group: ['idItems'],
                         raw : true, 
                         nest: true 
                     })
@@ -1304,7 +1303,7 @@ function searchItems(data){
     })
 }
 
-// Get items where
+// Create discount / update
 function createNewDiscounts(data){
     return new Promise(async(resolve, reject) =>{
         try{
@@ -1315,39 +1314,131 @@ function createNewDiscounts(data){
             // Không có lỗi
             if(_.isEmpty(checkEmptyData)){
 
-                // Nếu Discount items
-                if(data.itemsId && data.forItemType !== '' && data.itemsId !== ''){
-
-                    // Get items discount
-                    let getDisCountItems = await db.Items_discount.findOne({
-                        where: {
-                            idShop: data.idShop,
-                            forItemCategory: data.forItemCategory,
-                            forItemType: data.forItemType,
-                            itemsId: data.itemsId
-                        },
-                        include: [
-                            {model: db.Discount, attributes: ["valueEn"]},
-                            {model: db.Voucher, attributes: ["limitVn","limitUs"]},
-                        ],
-                        raw : true,
-                        nest: true
-                    })
-
-                    // Nếu items tồn tại
-                    if(getDisCountItems){
-
-                        // Báo lỗi khi items đã đc add discount
+                // Điều hướng lỗi
+                const nextError = (type, data) => {
+                    if(type === 'ERROR'){
+                        resolve({
+                            errCode: -2,
+                            errMessage: 'Add discount items error',
+                            data: {}
+                        })
+                    }
+                    if(type === 'OK'){
+                        resolve({
+                            errCode: 0,
+                            errMessage: 'OK',
+                        })
+                    }
+                    if(type === 'WARN'){
                         resolve({
                             errCode: -1,
-                            errMessage: {
-                                discount: getDisCountItems.Discount.valueEn ,
-                                limitPrice: getDisCountItems.Voucher ,
-                                valueEn: `The product already has a discount code. Execution Date(${getDisCountItems.dayStart}) - End Date(${getDisCountItems.dayEnd})`,
-                                valueVi: `Sản phẩm đã tồn tại mã giảm giá. Ngày thực thi (${getDisCountItems.dayStart}) - Ngày kết thúc (${getDisCountItems.dayEnd})`
+                            errMessage: 'Already exist !!!',
+                            data: data
+                        })
+                    }
+                }
+
+                // Update
+                if(data.type === 'UPDATE'){
+                    let res = ''
+                    if(data.itemsId && data.forItemType !== '' && data.itemsId !== ''){
+                        // Update discount items
+                        res = await db.Items_discount.update(
+                            {
+                                idShop: data.idShop,
+                                codeReduce: data.codeReduce,
+                                unitPrice: data.unitPrice,
+                                dayStart: data.startDay,
+                                dayEnd: data.startEnd,
+                                forItemCategory: data.forItemCategory,
+                                forItemType: data.forItemType || 'EMPTY',
+                                itemsId: data.itemsId || 'EMPTY',
                             },
+                            {where :{itemsId: data.itemsId}}
+                        )
+                    }
+
+                    if(data.forItemType && data.itemsId === ''){
+                        // Update discount items
+                        res = await db.Items_discount.update({
+                            idShop: data.idShop,
+                            codeReduce: data.codeReduce,
+                            unitPrice: data.unitPrice,
+                            dayStart: data.startDay,
+                            dayEnd: data.startEnd,
+                            forItemCategory: data.forItemCategory,
+                            forItemType: data.forItemType || 'EMPTY',
+                            itemsId: 'EMPTY',
+                        },
+                            {where :{forItemType: data.forItemType,forItemCategory: data.forItemCategory }}
+                        )
+                    }
+
+
+                    if(data.forItemCategory && data.forItemType === '' && data.itemsId === ''){
+                        // Update discount items
+                        res = await db.Items_discount.update({
+                            idShop: data.idShop,
+                            codeReduce: data.codeReduce,
+                            unitPrice: data.unitPrice,
+                            dayStart: data.startDay,
+                            dayEnd: data.startEnd,
+                            forItemCategory: data.forItemCategory,
+                            forItemType: 'EMPTY',
+                            itemsId: 'EMPTY',
+                        },
+                            {where :{forItemCategory: data.forItemCategory }}
+                        )
+                    }
+
+                    if(!res){
+                        nextError('ERROR')
+                    }else{
+                        nextError('OK')
+                    }
+                }
+
+                // Nếu Discount items
+                if(data.itemsId && data.forItemType !== '' && data.itemsId !== ''){
+                    
+                    // Hàm kiểm tra
+                    let dataResDiscountItems = await generalHandling.getDiscount(data, 'ITEMSID')
+
+                    // Nếu tồn tại
+                    if(dataResDiscountItems && dataResDiscountItems.isEXIST === true){
+                        nextError('WARN',dataResDiscountItems)
+                    }else{
+                        // Thêm discount items
+                        let res = await db.Items_discount.create({
+                            idShop: data.idShop,
+                            codeReduce: data.codeReduce,
+                            unitPrice: data.unitPrice,
+                            dayStart: data.startDay,
+                            dayEnd: data.startEnd,
+                            forItemCategory: data.forItemCategory,
+                            forItemType: data.forItemType || 'EMPTY',
+                            itemsId: data.itemsId || 'EMPTY',
                         })
 
+                        if(!res){
+                            nextError('ERROR')
+                        }else{
+                            nextError('OK')
+                        }
+                    }
+                }
+
+                // Discount Type
+                if(data.forItemType && data.itemsId === ''){
+                
+                    // Hàm kiểm tra
+                    let dataResDiscountItems = await generalHandling.getDiscount(data, 'TYPE')
+                    console.log('Data ve type :',dataResDiscountItems)
+
+
+                    // Nếu tồn tại
+                    if(dataResDiscountItems && dataResDiscountItems.isEXIST === true){
+                        nextError('WARN',dataResDiscountItems)
                     }else{
 
                         // Thêm discount items
@@ -1358,41 +1449,53 @@ function createNewDiscounts(data){
                             dayStart: data.startDay,
                             dayEnd: data.startEnd,
                             forItemCategory: data.forItemCategory,
-                            forItemType: data.forItemType || '',
-                            itemsId: data.itemsId || '',
+                            forItemType: data.forItemType,
+                            itemsId: 'EMPTY',
                         })
 
                         if(!res){
-                            resolve({
-                                errCode: -1,
-                                errMessage: 'Add discount items error',
-                            })
+                            nextError('ERROR')
+                        }else{
+                            nextError('OK')
                         }
-                        resolve({
-                            errCode: 0,
-                            errMessage: 'OK',
-                        })
                     }
                 }
 
-                // Discount Type
-                if(data.forItemType && data.itemsId === ''){
-                    console.log('Discount Type Items :',data.forItemType)
-  
-                }
-
-
                 // Discount Category
                 if(data.forItemCategory && data.forItemType === '' && data.itemsId === ''){
-                    console.log('Discount Category Items :',data.forItemCategory)
 
-                    
+                    // Hàm kiểm tra
+                    let dataResDiscountItems = await generalHandling.getDiscount(data, 'CATEGORY')
+
+                    // Nếu tồn tại
+                    if(dataResDiscountItems && dataResDiscountItems.isEXIST === true){
+                        nextError('WARN',dataResDiscountItems)
+                    }else{
+
+                        // Thêm discount items
+                        let res = await db.Items_discount.create({
+                            idShop: data.idShop,
+                            codeReduce: data.codeReduce,
+                            unitPrice: data.unitPrice,
+                            dayStart: data.startDay,
+                            dayEnd: data.startEnd,
+                            forItemCategory: data.forItemCategory,
+                            forItemType: 'EMPTY',
+                            itemsId: 'EMPTY',
+                        })
+
+                        if(!res){
+                            nextError('ERROR')
+                        }else{
+                            nextError('OK')
+                        }
+                    }
                 }
             }
 
             // Lỗi trống data
             resolve({
-                errCode: -1,
+                errCode: -2,
                 errMessage: 'Empty data !!!',
                 data: checkEmptyData
             })
@@ -1403,9 +1506,64 @@ function createNewDiscounts(data){
     })
 }
 
+// Get items where
+function getVoucher(data){
+    return new Promise(async(resolve, reject) =>{
+        try{
 
+            let dataCheck = CheckDataDown(data)
+            if(dataCheck.status === true){
+                let dataRes = []
+
+                if(data.idShop && data.category === 'EMPTY' && data.type === 'EMPTY'){
+                    dataRes = await db.Items_discount.findAll({
+                        where: {idShop: data.idShop},
+                        include: [
+                            {model: db.Discount, as:'dataImgItems', attributes: ["image"] },
+                        ],
+                        raw : true, 
+                        nest: true 
+                    })
+
+
+
+                    console.log(dataRes)
+
+
+                }
+
+                if(data.idShop && data.category !== 'EMPTY' && data.type === 'EMPTY'){
+
+                }
+
+
+                if(data.idShop && data.category !== 'EMPTY' && data.type !== 'EMPTY'){
+
+                }
+
+
+
+
+                resolve({
+                    errCode: 0,
+                    errMessage: 'OK',
+                    data: dataRes
+                })
+            }else{
+                resolve({
+                    errCode: -1,
+                    errMessage: 'Data empty !!!',
+                })
+            }
+        }
+        catch(error){
+            reject('Error reject :',error)
+        }
+    })
+}
 
 export default {
+    getVoucher,
     createNewDiscounts,
     searchItems,
     getAllDiscountItems,
