@@ -4,14 +4,29 @@ module.exports = (sequelize, DataTypes) => {
   class Items_discount extends Model {
     
     static associate(models) {  
+
       Items_discount.belongsTo(models.Discount, {foreignKey: 'codeReduce', targetKey: 'code'})
       Items_discount.belongsTo(models.Voucher, {foreignKey: 'unitPrice', targetKey: 'codeVocher'})
 
       Items_discount.belongsTo(models.Items, {foreignKey: 'itemsId', targetKey: 'idItems'})
 
-      Items_discount.belongsTo(models.Category, {foreignKey: 'forItemCategory', targetKey: 'code'})
 
+      Items_discount.belongsTo(models.Category, {foreignKey: 'forItemCategory', targetKey: 'code'})
       Items_discount.belongsTo(models.Type, {foreignKey: 'forItemType', targetKey: 'code'})
+
+      Items_discount.belongsTo(models.Items_color_image, {foreignKey: 'itemsId', targetKey: 'itemId'})
+
+      Items_discount.belongsTo(models.Store, {foreignKey: 'idShop', targetKey: 'id'})
+
+
+
+
+
+
+
+      
+
+
 
 
 

@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {  
 
       Category.hasMany(models.Items, {foreignKey: 'category', as : 'categoryData'})
-
       Category.hasMany(models.Items_discount, {foreignKey: 'forItemCategory'})
 
 

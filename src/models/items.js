@@ -13,10 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       Items.belongsTo(models.Category, {foreignKey: 'category', targetKey: 'code',as : 'categoryData'})
       Items.belongsTo(models.Store, {foreignKey: 'manageId', targetKey: 'manageId',as : 'storeData'})
       Items.belongsTo(models.Discount, {foreignKey: 'discounts', targetKey: 'code',as : 'discountData'})
-
       Items.belongsTo(models.Items_color_image, {foreignKey: 'idItems', targetKey: 'itemId',as : 'dataImgItems'})
-
       Items.hasMany(models.Items_discount, {foreignKey: 'itemsId'})
+
 
     }
   };

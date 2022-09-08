@@ -8,6 +8,9 @@ module.exports = (sequelize, DataTypes) => {
       Items_color_image.belongsTo(models.Color, {foreignKey: 'color',targetKey: 'code', as : 'colorData'})
 
       Items_color_image.hasMany(models.Items, {foreignKey: 'idItems', as : 'dataImgItems'})
+
+      Items_color_image.hasMany(models.Items_discount, {foreignKey: 'itemsId'})
+
       
      
 

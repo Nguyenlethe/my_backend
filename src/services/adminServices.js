@@ -1511,38 +1511,74 @@ function getVoucher(data){
     return new Promise(async(resolve, reject) =>{
         try{
 
+            console.log('Xuong :',data)
+
             let dataCheck = CheckDataDown(data)
             if(dataCheck.status === true){
-                let dataRes = []
+                let dataRes = {}
 
-                if(data.idShop && data.category === 'EMPTY' && data.type === 'EMPTY'){
+
+
+                // Lấy ra voucher cả Shop
+                if(data.idshop && data.category === 'EMPTY' && data.type === 'EMPTY'){
                     dataRes = await db.Items_discount.findAll({
-                        where: {idShop: data.idShop},
+                        where: {idShop: data.idshop},
+                        attributes:{exclude: ["createdAt","updatedAt"]},
                         include: [
-                            {model: db.Discount, as:'dataImgItems', attributes: ["image"] },
+                            {model: db.Discount, attributes: ["valueEn","valueVi"]},
+                            {model: db.Voucher, attributes: ["limitUs","limitVn"]},
+                            {model: db.Category, attributes: ["valueEn","valueVi"]},
+                            {model: db.Type, attributes: ["valueEn","valueVi"]},
+                            {model: db.Items_color_image, attributes: ["image"]},
+                            {model: db.Store, attributes: ["avata","nameShop"]},
+                            {model: db.Items, attributes: ["name","nameEn","price","priceUS","newPrice","newPriceUS"]},
+                    
                         ],
+                        group: ['id'],
+                        raw : true, 
+                        nest: true 
+                    })
+                }
+
+                // lấy voucher danh mục
+                if(data.idshop && data.category !== 'EMPTY' && data.type === 'EMPTY'){
+                    dataRes = await db.Items_discount.findAll({
+                        where: {idShop: data.idshop, forItemCategory: data.category, forItemType: 'EMPTY', itemsId: 'EMPTY'},
+                        attributes:{exclude: ["createdAt","updatedAt"]},
+                        include: [
+                            {model: db.Discount, attributes: ["valueEn","valueVi"]},
+                            {model: db.Voucher, attributes: ["limitUs","limitVn"]},
+                            {model: db.Category, attributes: ["valueEn","valueVi"]},
+                            {model: db.Store, attributes: ["avata"]},
+                        ],
+                        group: ['id'],
                         raw : true, 
                         nest: true 
                     })
 
-
-
-                    console.log(dataRes)
-
-
-                }
-
-                if(data.idShop && data.category !== 'EMPTY' && data.type === 'EMPTY'){
-
                 }
 
 
-                if(data.idShop && data.category !== 'EMPTY' && data.type !== 'EMPTY'){
-
+                // voucher type
+                if(data.idshop && data.category !== 'EMPTY' && data.type !== 'EMPTY'){
+                    dataRes = await db.Items_discount.findAll({
+                        where: {idShop: data.idshop, forItemCategory: data.category, forItemType:data.type, itemsId: 'EMPTY'},
+                        attributes:{exclude: ["createdAt","updatedAt"]},
+                        include: [
+                            {model: db.Discount, attributes: ["valueEn","valueVi"]},
+                            {model: db.Voucher, attributes: ["limitUs","limitVn"]},
+                            {model: db.Category, attributes: ["valueEn","valueVi"]},
+                            {model: db.Type, attributes: ["valueEn","valueVi"]},
+                            {model: db.Store, attributes: ["avata"]},
+                        ],
+                        group: ['id'],
+                        raw : true, 
+                        nest: true 
+                    })
                 }
 
-
-
+               
+                console.log(dataRes)
 
                 resolve({
                     errCode: 0,
