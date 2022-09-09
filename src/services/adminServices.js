@@ -1307,7 +1307,7 @@ function searchItems(data){
 function createNewDiscounts(data){
     return new Promise(async(resolve, reject) =>{
         try{
-
+            
             // Check data xuống
             let checkEmptyData = validateCreateUser(data, 'CREATE_DISCOUNT')
 
@@ -1340,8 +1340,11 @@ function createNewDiscounts(data){
 
                 // Update
                 if(data.type === 'UPDATE'){
+
+                    console.log('UPDATE :',data)
+
                     let res = ''
-                    if(data.itemsId && data.forItemType !== '' && data.itemsId !== ''){
+                    if(data.itemsId !== '' && data.forItemType !== '' && data.forItemCategory !== ''){
                         // Update discount items
                         res = await db.Items_discount.update(
                             {
@@ -1354,11 +1357,11 @@ function createNewDiscounts(data){
                                 forItemType: data.forItemType || 'EMPTY',
                                 itemsId: data.itemsId || 'EMPTY',
                             },
-                            {where :{itemsId: data.itemsId}}
+                            {where :{itemsId: data.itemsId,forItemType: data.forItemType, forItemCategory: data.forItemCategory }}
                         )
                     }
 
-                    if(data.forItemType && data.itemsId === ''){
+                    if(data.forItemType !== '' && data.itemsId === ''){
                         // Update discount items
                         res = await db.Items_discount.update({
                             idShop: data.idShop,
@@ -1367,15 +1370,15 @@ function createNewDiscounts(data){
                             dayStart: data.startDay,
                             dayEnd: data.startEnd,
                             forItemCategory: data.forItemCategory,
-                            forItemType: data.forItemType || 'EMPTY',
+                            forItemType: data.forItemType,
                             itemsId: 'EMPTY',
                         },
-                            {where :{forItemType: data.forItemType,forItemCategory: data.forItemCategory }}
+                            {where :{itemsId: 'EMPTY',forItemType: data.forItemType, forItemCategory: data.forItemCategory}}
                         )
                     }
 
 
-                    if(data.forItemCategory && data.forItemType === '' && data.itemsId === ''){
+                    if(data.forItemCategory !== '' && data.forItemType === '' && data.itemsId === ''){
                         // Update discount items
                         res = await db.Items_discount.update({
                             idShop: data.idShop,
@@ -1387,7 +1390,7 @@ function createNewDiscounts(data){
                             forItemType: 'EMPTY',
                             itemsId: 'EMPTY',
                         },
-                            {where :{forItemCategory: data.forItemCategory }}
+                            {where :{itemsId: 'EMPTY',forItemType: 'EMPTY', forItemCategory: data.forItemCategory}}
                         )
                     }
 
@@ -1407,7 +1410,9 @@ function createNewDiscounts(data){
                     // Nếu tồn tại
                     if(dataResDiscountItems && dataResDiscountItems.isEXIST === true){
                         nextError('WARN',dataResDiscountItems)
+
                     }else{
+
                         // Thêm discount items
                         let res = await db.Items_discount.create({
                             idShop: data.idShop,
@@ -1518,7 +1523,6 @@ function getVoucher(data){
                 let dataRes = {}
 
 
-
                 // Lấy ra voucher cả Shop
                 if(data.idshop && data.category === 'EMPTY' && data.type === 'EMPTY'){
                     dataRes = await db.Items_discount.findAll({
@@ -1532,7 +1536,6 @@ function getVoucher(data){
                             {model: db.Items_color_image, attributes: ["image"]},
                             {model: db.Store, attributes: ["avata","nameShop"]},
                             {model: db.Items, attributes: ["name","nameEn","price","priceUS","newPrice","newPriceUS"]},
-                    
                         ],
                         group: ['id'],
                         raw : true, 
@@ -1555,7 +1558,6 @@ function getVoucher(data){
                         raw : true, 
                         nest: true 
                     })
-
                 }
 
 
@@ -1598,7 +1600,66 @@ function getVoucher(data){
     })
 }
 
+// Delete Voucher
+function deleteVoucher(data){
+    return new Promise(async(resolve, reject) =>{
+        try{
+
+            console.log(data)
+
+            if(data.category === '') data.category = 'EMPTY'
+            if(data.type === '') data.type = 'EMPTY'
+            if(data.idItems === '') data.idItems = 'EMPTY'
+
+
+            const discountItems = await db.Items_discount.findOne({ 
+                where: {
+                    idShop: data.idShop,
+                    forItemCategory: data.category,
+                    forItemType: data.type,
+                    itemsId: data.idItems
+                }       
+            })  
+
+            console.log(discountItems)
+
+            if(discountItems){
+                const res = await db.Items_discount.destroy({ 
+                    where: {
+                        idShop: data.idShop,
+                        forItemCategory: data.category,
+                        forItemType: data.type,
+                        itemsId: data.idItems
+    
+                    }       
+                })  
+
+                if(res){
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Delete success',
+                    })
+                }
+            }
+
+           
+            resolve({
+                errCode: -1,
+                errMessage: 'Voucher not exist'
+            })
+            
+        }
+        catch(error){
+            reject("Delete reject : " + error.message)
+        }
+    })
+}
+
+
+
+
 export default {
+    deleteVoucher,
     getVoucher,
     createNewDiscounts,
     searchItems,

@@ -35,6 +35,9 @@ function initWebRoutes(app) {
     router.get('/admin/get-data-discount', adminController.getAllDiscountItems)
     router.get('/admin/search-data-items', adminController.searchItems)
     router.get('/admin/get-voucher', adminController.getVoucher)
+    router.post('/admin/delete-voucher', adminController.deleteVoucher)
+
+    
 
 
 

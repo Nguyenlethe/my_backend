@@ -489,7 +489,19 @@ const getVoucher = async (req, res) => {
     }
 }
 
+// Delete voucher
+const deleteVoucher = async (req, res) => {
+    try{
+        let dataClient = req.body
+        let data = await adminServices.deleteVoucher(dataClient)
+        return res.status(200).json(data)
+    }catch(err){
+        return res.status(200).json(err)
+    }
+}
+
 export default {
+    deleteVoucher,
     getVoucher,
     createNewDiscounts,
     searchItems,
