@@ -1516,7 +1516,6 @@ function getVoucher(data){
     return new Promise(async(resolve, reject) =>{
         try{
 
-            console.log('Xuong :',data)
 
             let dataCheck = CheckDataDown(data)
             if(dataCheck.status === true){
@@ -1580,8 +1579,6 @@ function getVoucher(data){
                 }
 
                
-                console.log(dataRes)
-
                 resolve({
                     errCode: 0,
                     errMessage: 'OK',
@@ -1655,10 +1652,289 @@ function deleteVoucher(data){
     })
 }
 
+// Create discount / update
+function addPriceShip(data){
+    return new Promise(async(resolve, reject) =>{
+        try{
+            let dataExist = ''
 
+            // Lấy ra phần tử đầu của mảng
+            let fristData = data[0]
+
+            // Sản phẩm 
+            if(fristData.itemsId !== 'EMPTY'){
+                dataExist = await db.Ship.findAll({
+                    where: {
+                        idShop: fristData.idShop,
+                        itemsId: fristData.itemsId
+                    },
+                    include: [
+                        {model: db.Items,
+                            include: [
+                                {model: db.Category, as: 'categoryData', attributes: ["valueEn", "valueVi"]},
+                                {model: db.Type, as: 'typeData', attributes: ["valueEn", "valueVi"]},
+                                {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"]},
+                            ],
+                            group: ['idItems'],
+                            raw : true, 
+                            nest: true 
+                        },
+                        {model: db.Store, attributes: ["nameShop","avata"]},
+                        {model: db.Province, attributes: ["valueEn","valueVi"]},
+                    ],
+                    group: ['province'],
+                    raw : true, 
+                    nest: true 
+                })
+
+                if(dataExist.length == 0){
+                    await db.Ship.bulkCreate(data)
+
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'OK'
+                    })
+                }
+            }
+
+            // Loại hàng
+            if(fristData.category !== 'EMPTY' && fristData.categoryType !== 'EMPTY' && fristData.itemsId === 'EMPTY'){
+                dataExist = await db.Ship.findAll({
+                    where: {
+                        idShop: fristData.idShop,
+                        itemsId: 'EMPTY',
+                        categoryType: fristData. categoryType,
+                        category: fristData.category
+                    },
+                    include: [
+                        {model: db.Category, attributes: ["valueEn","valueVi"]},
+                        {model: db.Type, attributes: ["valueEn","valueVi"]},
+                        {model: db.Store, attributes: ["nameShop","avata"]},
+                        {model: db.Province, attributes: ["valueEn","valueVi"]},
+                    ],
+                    raw : true, 
+                    nest: true 
+                })
+
+                if(dataExist.length == 0){
+                    await db.Ship.bulkCreate(data)
+
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'OK'
+                    })
+                }
+            }
+
+            // Danh mục
+            if(fristData.category !== 'EMPTY' && fristData.categoryType === 'EMPTY' && fristData.itemsId === 'EMPTY'){
+                dataExist = await db.Ship.findAll({
+                    where: {
+                        idShop: fristData.idShop,
+                        itemsId: 'EMPTY',
+                        categoryType: 'EMPTY',
+                        category: fristData.category
+                    },
+                    include: [
+                        {model: db.Category, attributes: ["valueEn","valueVi"]},
+                        {model: db.Store, attributes: ["nameShop","avata"]},
+                        {model: db.Province, attributes: ["valueEn","valueVi"]},
+
+                    ],
+                    raw : true, 
+                    nest: true 
+                })
+
+                if(dataExist.length == 0){
+                    await db.Ship.bulkCreate(data)
+
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'OK'
+                    })
+                }
+            }
+
+
+            resolve({
+                errCode: 1,
+                message: 'Shipping price already exists',
+                data: dataExist
+            })
+
+          
+        }
+        catch(error){
+            reject('Error reject :',error)
+        }
+    })
+}
+
+// Get price ship
+function getPriceShip(data){
+    return new Promise(async(resolve, reject) =>{
+        try{
+
+            let dataPriceShip = []
+
+            //  DELETE Price ship
+            if(data.actions === 'DELETE'){
+
+                dataPriceShip = await db.Ship.destroy({ 
+                    where: {
+                        idShop: data.idShop,
+                        category: data.category,
+                        itemsId: data.itemsId,
+                        categoryType: data.categoryType,
+                    }       
+                })  
+
+
+                resolve({
+                    errCode: 0,
+                    errMessage: 'OK',
+                    data: dataPriceShip
+                })
+            }
+
+            // category
+            if(data.idShop !== 'EMPTY' && data.itemsId === 'EMPTY' && data.category !== 'EMPTY' && data.categoryType === 'EMPTY' && data.actions !== 'DELETE'){
+                dataPriceShip = await db.Ship.findAll({
+                    attributes:{exclude: ["createdAt","updatedAt"]},
+                    where: {
+                        idShop: data.idShop,
+                        category: data.category,
+                        itemsId: 'EMPTY',
+                        categoryType: 'EMPTY',
+                    },
+                    include: [
+                        {model: db.Category, attributes: ["valueEn","valueVi"]},
+                        {model: db.Store, attributes: ["nameShop","avata"]},
+                        {model: db.Province, attributes: ["valueEn","valueVi"]},
+
+                    ],
+                    raw : true, 
+                    nest: true 
+                })
+            }
+
+            // Category Type
+            if(data.idShop !== 'EMPTY' && data.itemsId === 'EMPTY' && data.category !== 'EMPTY' && data.categoryType !== 'EMPTY' && data.actions !== 'DELETE'){
+                dataPriceShip = await db.Ship.findAll({
+                    attributes:{exclude: ["createdAt","updatedAt"]},
+                    where: {
+                        idShop: data.idShop,
+                        category: data.category,
+                        itemsId: 'EMPTY',
+                        categoryType: data.categoryType,
+                    },
+                    include: [
+                        {model: db.Category, attributes: ["valueEn","valueVi"]},
+                        {model: db.Type, attributes: ["valueEn","valueVi"]},
+                        {model: db.Store, attributes: ["nameShop","avata"]},
+                        {model: db.Province, attributes: ["valueEn","valueVi"]},
+                    ],
+                    raw : true, 
+                    nest: true 
+                })
+            }
+
+            // 1 sản phẩm
+            if(data.idShop !== 'EMPTY' && data.itemsId !== 'EMPTY' && data.itemsId !== 'All' && data.category === 'EMPTY' && data.categoryType === 'EMPTY' && data.actions !== 'DELETE'){
+                dataPriceShip = await db.Ship.findAll({
+                    attributes:{exclude: ["createdAt","updatedAt"]},
+                    where: {
+                        idShop: data.idShop,
+                        category: 'EMPTY',
+                        itemsId: data.itemsId,
+                        categoryType: 'EMPTY',
+                    },
+                    include: [
+                        {model: db.Items,
+                            include: [
+                                {model: db.Category, as: 'categoryData', attributes: ["valueEn", "valueVi"]},
+                                {model: db.Type, as: 'typeData', attributes: ["valueEn", "valueVi"]},
+                                {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"]},
+                            ],
+                            group: ['idItems'],
+                            raw : true, 
+                            nest: true 
+                        },
+                        {model: db.Store, attributes: ["nameShop","avata"]},
+                        {model: db.Province, attributes: ["valueEn","valueVi"]},
+                    ],
+                    group: ['province'],
+                    raw : true, 
+                    nest: true 
+                })
+            }
+
+            // All sản phẩm
+            if(data.idShop !== 'EMPTY' && data.itemsId === 'All'){
+                dataPriceShip = await db.Ship.findAll({
+                    attributes:{exclude: ["createdAt","updatedAt"]},
+                    where: {
+                        idShop: data.idShop,
+                        category: 'EMPTY',
+                        categoryType: 'EMPTY',
+                    }
+                })
+            }
+
+
+            resolve({
+                errCode: 0,
+                errMessage: 'OK',
+                data: dataPriceShip
+            })
+
+        }
+        catch(error){
+            reject('Error reject :',error)
+        }
+    })
+}
+
+// Change shop Not IMG
+function updatePriceShip(data){
+    return new Promise(async(resolve, reject) =>{
+        try{
+
+            let dataPriceShip = await db.Ship.destroy({
+                where: {
+                    idShop: data[0].idShop,
+                    category: data[0].category,
+                    itemsId: data[0].itemsId,
+                    categoryType: data[0].categoryType,
+                }       
+            })
+
+            if(dataPriceShip){
+                await db.Ship.bulkCreate(data)
+
+                resolve({
+                    errCode: 2,
+                    errMessage: 'OK'
+                })
+            }
+
+    
+            resolve({
+                errCode: 0,
+                errMessage:'Ok',
+            })
+        }
+        catch(error){
+            reject("Err reject : " + error.message)
+        }
+    })
+}
 
 
 export default {
+    updatePriceShip,
+    getPriceShip,
+    addPriceShip,
     deleteVoucher,
     getVoucher,
     createNewDiscounts,

@@ -489,6 +489,7 @@ const getVoucher = async (req, res) => {
     }
 }
 
+
 // Delete voucher
 const deleteVoucher = async (req, res) => {
     try{
@@ -500,7 +501,47 @@ const deleteVoucher = async (req, res) => {
     }
 }
 
+
+// Create items
+const addPriceShip = async (req, res) => {
+    try{
+        let dataPriceShip = req.body
+        let data = await adminServices.addPriceShip(dataPriceShip)
+        return res.status(200).json(data)
+        
+    }catch(err){
+        return res.status(200).json(err)
+    }
+}
+
+// Get data getPriceShip
+const getPriceShip = async (req, res) => {
+    try{
+        let dataClient = req.query
+        let data = await adminServices.getPriceShip(dataClient)
+        return res.status(200).json(data)
+    }catch(err){
+        return res.status(200).json(err)
+    }
+}
+
+
+// update data PriceShip
+const updatePriceShip = async (req, res) => {
+    try{
+        let dataClient = req.body
+        let data = await adminServices.updatePriceShip(dataClient)
+        return res.status(200).json(data)
+    }catch(err){
+        return res.status(200).json(err)
+    }
+}
+
+
 export default {
+    updatePriceShip,
+    getPriceShip,
+    addPriceShip,
     deleteVoucher,
     getVoucher,
     createNewDiscounts,

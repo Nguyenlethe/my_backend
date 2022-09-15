@@ -6,7 +6,14 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {  
 
       Type.hasMany(models.Items, {foreignKey: 'type', as : 'TypeData'})
-      Type.hasMany(models.Items_discount, {foreignKey: 'forItemType'})
+
+      Type.hasOne(models.Items_discount, {foreignKey: 'forItemType'})
+
+      Type.hasMany(models.Ship, {foreignKey: 'categoryType'})
+
+
+
+
 
      
 

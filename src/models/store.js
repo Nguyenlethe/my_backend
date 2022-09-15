@@ -3,17 +3,15 @@ const {Model} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Store extends Model {
 
-     /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    
     static associate(models) {  
 
       Store.belongsTo(models.User, {foreignKey: 'manageId',targetKey: 'id', as : 'FullName'})
-      Store.hasMany(models.Items, {foreignKey: 'manageId', as: 'storeData'})
+      Store.belongsTo(models.Ship, {foreignKey: 'manageId',targetKey: 'idShop'})
 
+      
+
+      Store.hasMany(models.Items, {foreignKey: 'manageId', as: 'storeData'})
+      Store.hasMany(models.Ship, {foreignKey: 'idShop'})
       Store.hasMany(models.Items_discount, {foreignKey: 'idShop'})
 
 

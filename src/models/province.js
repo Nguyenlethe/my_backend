@@ -8,6 +8,9 @@ module.exports = (sequelize, DataTypes) => {
       Province.hasMany(models.User, { foreignKey: 'district', as : 'districtData' })
       Province.hasMany(models.User, { foreignKey: 'wards', as : 'wardsData' })
 
+      Province.hasMany(models.Ship, { foreignKey: 'province'})
+
+
  
     }
   };
@@ -17,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     valueEn: DataTypes.STRING,
     valueVi: DataTypes.STRING,
   }, {
-    sequelize,
+    sequelize, 
     modelName: 'Province',
   });
   return Province;

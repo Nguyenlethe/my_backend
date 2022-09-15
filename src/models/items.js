@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
       Items.belongsTo(models.Discount, {foreignKey: 'discounts', targetKey: 'code',as : 'discountData'})
       Items.belongsTo(models.Items_color_image, {foreignKey: 'idItems', targetKey: 'itemId',as : 'dataImgItems'})
       Items.hasMany(models.Items_discount, {foreignKey: 'itemsId'})
+      Items.hasMany(models.Ship, {foreignKey: 'itemsId'})
+
 
 
     }
@@ -22,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
   Items.init({
     idItems: DataTypes.STRING,
     idShop: DataTypes.INTEGER,
-    manageId:  DataTypes.INTEGER,
+    manageId:  DataTypes.INTEGER, 
     category: DataTypes.STRING,
     type: DataTypes.STRING, 
     discounts: DataTypes.STRING,

@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
 
       Category.hasMany(models.Items, {foreignKey: 'category', as : 'categoryData'})
       Category.hasMany(models.Items_discount, {foreignKey: 'forItemCategory'})
+      Category.hasMany(models.Ship, {foreignKey: 'category'})
 
 
      
