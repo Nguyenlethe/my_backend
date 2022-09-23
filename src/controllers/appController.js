@@ -52,9 +52,20 @@ const createNewUser = async (req, res) => {
 }
 
 
+// idshop value 
+const searchItemsNameNav = async (req, res) => {
+    try{
+        let dataClient = req.query
+        let data = await appServices.searchItemsNameNav(dataClient)
+        return res.status(200).json(data)
+    }catch(e){
+        return res.status(200).json(e)
+    }
+}
 
 
 export default {
+    searchItemsNameNav,
     createNewUser,
     updatePassword,
     loginSystem,

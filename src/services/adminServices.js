@@ -782,12 +782,16 @@ function addNewItems(data){
 }
 
 // Get data items
-function getDataItems(inputType){
+function getDataItems(dataClient){
     return new Promise(async(resolve, reject) =>{
         try{
-            let data = {}
-            if(inputType === 'All'){
+            let data = {} 
+            data.inputType = []
+            console.log('DATA XUONGS :',dataClient)
+            // { amount: 'All',idItems: 'EMPTY', idShop: 'EMPTY', category: 'EMPTY', type: 'EMPTY' }
 
+            // All items
+            if(dataClient.amount === 'All' && dataClient.idItems === 'EMPTY' && dataClient.idShop === 'EMPTY' && dataClient.category  ===  'EMPTY' && dataClient.type  ===  'EMPTY' ){
                 // Lấy thông tin items
                 data.inputType = await db.Items.findAll({
                     order: [['createdAt', 'DESC']],      
@@ -812,77 +816,104 @@ function getDataItems(inputType){
                     raw : true, 
                     nest: true 
                 })
-
-
-                // Lấy ra danh sách id items
-                let itemsCoppy = data.inputType.map(item => {
-                    return item.idItems
-                })
-
-                // Lấy ra màu + ảnh
-                let dataColorImg = await db.Items_color_image.findAll({
-                    attributes: {exclude: ['id','createdAt','updatedAt','imageLink','color']},
-                    order: [['createdAt', 'DESC']],  
-                    where: {
-                        itemId: {
-                            [Op.in]: [...itemsCoppy]
-                        }
-                    },        
-                    include : [
-                        { model: db.Color, as: 'colorData', attributes: ["code","valueEn", "valueVi"]},
-                    ],
-                    raw : true, 
-                    nest: true 
-                })
-
-                // Lấy ra size + amount 
-                let dataSizeAmount = await db.Items_size_amount.findAll({
-                    attributes: {exclude: ['id','createdAt','updatedAt','size','typeSize']},
-                    order: [['createdAt', 'DESC']],  
-                    where: {
-                        itemsId: {
-                            [Op.in]: [...itemsCoppy]
-                        }
-                    },        
-                    include : [
-                        { model: db.Size, as: 'sizeData', attributes: ["code","valueEn", "valueVi"]},
-                        { model: db.Type_size, as: 'typeSizeData', attributes: ["code","valueEn", "valueVi"]},
-
-                    ],
-                    raw : true, 
-                    nest: true 
-                })
-
-                // Gán data color + img cho items
-                data.inputType.map((item,index) => {
-                    let dataColor = dataColorImg.filter(data => {
-                        if(data.itemId === item.idItems){
-                            return data
-                        }
-                    })
-                    item.dataColorImg = [...dataColor]
-                })
-
-                // Gán data size + amount  cho items
-                data.inputType.map((item,index) => {
-                    let dataSize = dataSizeAmount.filter(data => {
-                        if(data.itemsId === item.idItems){
-                            return data
-                        }
-                    })
-                    item.dataSizeAmount = [...dataSize]
-                })
-
-    
-              
-
             }
+
+            // One items
+            if(dataClient.amount === 'ONE' && dataClient.idItems !== 'EMPTY' && dataClient.idShop === 'EMPTY' && dataClient.category  ===  'EMPTY' && dataClient.type  ===  'EMPTY' ){
+                // Lấy thông tin items
+                data.inputType = await db.Items.findOne({
+                    where: {idItems: dataClient.idItems},
+                    order: [['createdAt', 'DESC']],      
+                    attributes: { exclude: ['category','type'] },
+                    include: [
+                        {model: db.Store, as: 'storeData', attributes: ["manageId","nameShop"]},
+                        {model: db.Discount, as: 'discountData', attributes: ["code","valueEn", "valueVi"]},
+                        {model: db.Category, as: 'categoryData', attributes: ["code","valueEn", "valueVi"]},
+                        {model: db.Type, as: 'typeData', attributes: ["code","valueEn", "valueVi"]},
+                        {model: db.Items_info,as: 'infoItemsData', 
+                            attributes: ['describeHtmlEn','describeTextEn','describeHtmlVi','describeTextVi','trademark','production','sentFrom','texture',
+                        ],
+                            include: [
+                                {model: db.Trademark, as: 'trademarkData', attributes: ["code","valueEn", "valueVi"]},
+                            ],
+                            attributes: {
+                                exclude: ['trademark','createdAt','updatedAt']      
+                            },
+                        },
+                    ],
+                    limit : 20,
+                    raw : true, 
+                    nest: true 
+                })
+
+                data.inputType = [data.inputType]
+            }
+
+            // Lấy ra danh sách id items
+            let itemsCoppy = data.inputType.map(item => {
+                return item.idItems
+            })
+
+            // Lấy ra màu + ảnh
+            let dataColorImg = await db.Items_color_image.findAll({
+                attributes: {exclude: ['id','createdAt','updatedAt','imageLink','color']},
+                order: [['createdAt', 'DESC']],  
+                where: {
+                    itemId: {
+                        [Op.in]: [...itemsCoppy]
+                    }
+                },        
+                include : [
+                    { model: db.Color, as: 'colorData', attributes: ["code","valueEn", "valueVi"]},
+                ],
+                raw : true, 
+                nest: true 
+            })
+
+            // Lấy ra size + amount 
+            let dataSizeAmount = await db.Items_size_amount.findAll({
+                attributes: {exclude: ['id','createdAt','updatedAt','size','typeSize']},
+                order: [['createdAt', 'DESC']],  
+                where: {
+                    itemsId: {
+                        [Op.in]: [...itemsCoppy]
+                    }
+                },        
+                include : [
+                    { model: db.Size, as: 'sizeData', attributes: ["code","valueEn", "valueVi"]},
+                    { model: db.Type_size, as: 'typeSizeData', attributes: ["code","valueEn", "valueVi"]},
+
+                ],
+                raw : true, 
+                nest: true 
+            })
+
+            // Gán data color + img cho items
+            data.inputType.map((item,index) => {
+                let dataColor = dataColorImg.filter(data => {
+                    if(data.itemId === item.idItems){
+                        return data
+                    }
+                })
+                item.dataColorImg = [...dataColor]
+            })
+
+            // Gán data size + amount  cho items
+            data.inputType.map((item,index) => {
+                let dataSize = dataSizeAmount.filter(data => {
+                    if(data.itemsId === item.idItems){
+                        return data
+                    }
+                })
+                item.dataSizeAmount = [...dataSize]
+            })
+
+           
             resolve({
                 errCode: 0,
                 message: 'Ok',
                 data: data
             })
-
 
         }catch(err){
             console.log(err)
@@ -953,8 +984,8 @@ function editItems(data){
                     })
                 })
                 
-
                 let imgOld = await db.Items_color_image.findAll({where: {itemId: data.dataItemsColorImgages[0].itemId},attributes: ['image']})
+                
                 // Lấy ra img cũ
                 let dataImgOld = [] 
                 imgOld.map(item => dataImgOld.push(item.image))
@@ -1930,8 +1961,164 @@ function updatePriceShip(data){
     })
 }
 
+// create data other
+function createDataOther(data){
+    return new Promise(async(resolve, reject) =>{
+        try{
+
+            console.log(data.dataType)
+
+            // Color
+            if(data.dataTabelColor && data.type === 'COLOR'){
+                let dataColor = data.dataTabelColor
+
+                let color = await db.Color.findOne({
+                    where: {code: dataColor.code}
+                })
+
+                if(color){
+                    resolve({
+                        errCode: -1,
+                        errMessage: 'Color code already exists',
+                        data: {
+                            valueVi: 'Mã màu đã tồn tại !!!',
+                            valueEn: 'Color code already exists !!!',
+                        }
+                    })
+                }else{
+                    
+                    await db.Color.create({ 
+                        colorId:  dataColor.colorId,	
+                        idUserCreate:  dataColor.idUserCreate,	
+                        code:  dataColor.code,	
+                        valueEn:  dataColor.valueEn,	
+                        valueVi:  dataColor.valueVi	
+                    })
+                    resolve({
+                        errCode: 0,
+                        message: 'OK',
+                    })
+                }
+            }
+
+            // Trademarks
+            if(data.dataTrademarks && data.type === 'TRADEMARKS'){
+                let dataTrademarks = data.dataTrademarks
+
+                let Trademarks = await db.Trademark.findOne({
+                    where: {code: dataTrademarks.code}
+                })
+
+                if(Trademarks){
+                    resolve({
+                        errCode: -1,
+                        errMessage: 'Trademarks code already exists',
+                        data: {
+                            valueVi: 'Mã thuơng hiệu đã tồn tại !!!',
+                            valueEn: 'Trademarks code already exists !!!',
+                        }
+                    })
+                }else{
+                    
+                    await db.Trademark.create({ 
+                        trademarkId:  dataTrademarks.trademarkId,	
+                        idUserCreate:  dataTrademarks.idUserCreate,	
+                        code:  dataTrademarks.code,	
+                        valueEn:  dataTrademarks.valueEn,	
+                        valueVi:  dataTrademarks.valueEn	
+                    })
+                    resolve({
+                        errCode: 0,
+                        message: 'OK',
+                    })
+                }
+            }
+
+            // Category 
+            if(data.dataCategories && data.type === 'CATEGRORY'){
+                let dataCategories = data.dataCategories
+
+                let category = await db.Category.findOne({
+                    where: {code: dataCategories.code}
+                })
+
+                if(category){
+                    resolve({
+                        errCode: -1,
+                        errMessage: 'Category code already exists',
+                        data: {
+                            valueVi: 'Mã danh mục đã tồn tại !!!',
+                            valueEn: 'Category code already exists !!!',
+                        }
+                    })
+                }else{
+                    
+                    await db.Category.create({ 
+                        categoryId:  dataCategories.categoryId,	
+                        idUserCreate:  dataCategories.idUserCreate,	
+                        code:  dataCategories.code,	
+                        valueEn:  dataCategories.valueEn,	
+                        valueVi:  dataCategories.valueEn	
+                    })
+                    resolve({
+                        errCode: 0,
+                        message: 'OK',
+                    })
+                }
+            }
+
+            // Type
+            if(data.dataType && data.type === 'TYPE'){
+                let dataType = data.dataType
+
+                let type = await db.Type.findOne({
+                    where: {code: dataType.code}
+                })
+
+                if(type){
+                    resolve({
+                        errCode: -1,
+                        errMessage: 'Code type product already exists',
+                        data: {
+                            valueVi: 'Mã loại sản phẩm đã tồn tại !!!',
+                            valueEn: 'Code type product already exists !!!',
+                        }
+                    })
+                }else{
+                    
+                    await db.Type.create({ 
+                        typeId:  dataType.typeId,	
+                        idUserCreate:  dataType.idUserCreate,	
+                        code:  dataType.code,	
+                        valueEn:  dataType.valueEn,	
+                        valueVi:  dataType.valueEn	
+                    })
+                    resolve({
+                        errCode: 0,
+                        message: 'OK',
+                    })
+                }
+            }
+
+     
+
+           
+            resolve({
+                errCode: 0,
+                message: 'OK',
+            })
+
+        }
+        catch(error){
+            reject('Error reject :',error)
+        }
+    })
+}
+
+
 
 export default {
+    createDataOther,
     updatePriceShip,
     getPriceShip,
     addPriceShip,

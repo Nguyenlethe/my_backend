@@ -40,13 +40,16 @@ function initWebRoutes(app) {
     router.post('/admin/delete-voucher',      adminController.deleteVoucher      )
     router.post('/admin/add-price-ship',      adminController.addPriceShip       )
     router.post('/admin/update-price-ship',   adminController.updatePriceShip    )
+    router.post('/admin/crate-data-other',    adminController.createDataOther    )
 
-
+   
     // APP
     router.post('/system/login',              appController.loginSystem          )
     router.post(`/system/create-user`,        appController.createNewUser        )
     router.post('/system/forgot-password',    appController.forgotPassword       )
     router.post('/system/update-password',    appController.updatePassword       )
+    router.get('/admin/search-name-items',    appController.searchItemsNameNav   )
+
 
     return app.use('/', router)
 }

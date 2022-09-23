@@ -3,7 +3,7 @@ import hashPassword from '../utils/hashPassword'
 import bcrypt  from 'bcryptjs'; 
 import db from '../models/index'
 import sendEmail from '../utils/sendEmail'
-
+const { Op } = require("sequelize");
 const salt = bcrypt.genSaltSync(10);
 
 
@@ -88,7 +88,7 @@ function forgotPassword(inputData) {
 
                 let token = Math.floor(Math.random() * 10000);
                 await sendEmail.sendSimpleEmail({...inputData,fullName: `${res.firstName} ${res.lastName}`, token: token})
-
+   
 
                 let addTokenDbUser = await db.User.update(
                     { token: token},
@@ -218,9 +218,196 @@ function createNewUser(dataForm) {
     })
 }
 
+// Get items where
+function searchItemsNameNav(data){
+    return new Promise(async(resolve, reject) =>{
+        try{
+
+            // idShop: 'EMPTY',
+            // category: 'All',
+            // type: 'EMPTY',
+            // language: 'vi',
+            // value: 'a',
+            // limit: '5',
+            // page: '1'
+
+            console.log(data)
+
+            let dataSearch = []
+            const numberLimit =  Number(data.limit)
+            const pageNumber = Number(data.page)
+
+
+            let count = await db.Items.findAll({attributes: ['id']})
+
+
+            //  Toàn bộ web vi
+            if(data.idShop === 'EMPTY' && data.language === 'vi' && data.category === 'All'){
+                dataSearch = await db.Items.findAll({
+                    where: {
+                        name: {
+                            [Op.substring]: data.value
+                        }
+                    },
+                    include: [
+                        {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
+                    ],
+                    offset:((pageNumber-1) * numberLimit),
+                    limit : numberLimit,
+                    subQuery:false,
+                    group: ['idItems'],
+                    raw : true, 
+                    nest: true 
+                })
+            }
+
+            //  Toàn bộ web en
+            if(data.idShop === 'EMPTY' && data.language === 'en' && data.category === 'All'){
+                dataSearch = await db.Items.findAll({
+                    where: {
+                        nameEn: {
+                            [Op.substring]: data.value
+                        }
+                    },
+                    include: [
+                        {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
+                    ],
+                     offset:((pageNumber-1) * numberLimit),
+                    limit : numberLimit,
+                    subQuery:false,
+                    group: ['idItems'],
+                    raw : true, 
+                    nest: true 
+                })
+            }
 
 
 
 
 
-export default {updatePassword, loginSystem, forgotPassword,createNewUser}
+            // Trong shop vi
+            if(data.idShop !== 'EMPTY' && data.language === 'vi'){
+                dataSearch = await db.Items.findAll({
+                    where: {
+                        idShop: data.idShop,
+                        name: {
+                            [Op.substring]: data.value
+                        }
+                    },
+                    include: [
+                        {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
+                    ],
+                     offset:((pageNumber-1) * numberLimit),
+                    limit : numberLimit,
+                    subQuery:false,
+                    group: ['idItems'],
+                    raw : true, 
+                    nest: true 
+                })
+            }
+
+            // Trong shop en
+            if(data.idShop !== 'EMPTY' && data.language === 'en'){
+                dataSearch = await db.Items.findAll({
+                    where: {
+                        idShop: data.idShop,
+                        nameEn: {
+                            [Op.substring]: data.value
+                        }
+                    },
+                    include: [
+                        {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
+                    ],
+                     offset:((pageNumber-1) * numberLimit),
+                    limit : numberLimit,
+                    subQuery:false,
+                    group: ['idItems'],
+                    raw : true, 
+                    nest: true 
+                })
+            }
+
+
+
+
+
+            // Trong Danh mục vi
+            if(data.idShop === 'EMPTY' && data.language === 'vi' && data.category !== 'All'){
+                dataSearch = await db.Items.findAll({
+                    where: {
+                        category: data.category,
+                        nameEn: {
+                            [Op.substring]: data.value
+                        }
+                    },
+                    include: [
+                        {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
+                    ],
+                    offset:((pageNumber-1) * numberLimit),
+                    limit : numberLimit,
+                    subQuery:false,
+                    group: ['idItems'],
+                    raw : true, 
+                    nest: true 
+                })
+            }
+
+            // Trong Danh mục En
+            if(data.idShop === 'EMPTY' && data.language === 'en' && data.category !== 'All'){
+                dataSearch = await db.Items.findAll({
+                    where: {
+                        category: data.category,
+                        nameEn: {
+                            [Op.substring]: data.value
+                        }
+                    },
+                    include: [
+                        {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
+                    ],
+                    offset:((pageNumber-1) * numberLimit),
+                    limit : numberLimit,
+                    subQuery:false,
+                    group: ['idItems'],
+                    raw : true, 
+                    nest: true 
+                })
+            }
+
+
+
+
+            // NOT ITEMS
+            if(dataSearch.length === 0){
+                resolve({
+                    errCode: -2,
+                    errMessage: 'Not Items',
+                    data: []
+                })
+            }
+
+
+            // OK
+            resolve({
+                errCode: 0,
+                errMessage: 'OK',
+                data: dataSearch,
+                count: count.length
+            })
+            
+        }
+        catch(error){
+            reject('Error reject :',error)
+        }
+    })
+}
+
+
+
+
+export default {
+    updatePassword, 
+    loginSystem, 
+    forgotPassword,
+    createNewUser,
+    searchItemsNameNav
+}

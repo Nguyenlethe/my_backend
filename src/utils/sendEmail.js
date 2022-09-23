@@ -22,13 +22,13 @@ if(ObjectData.valueLanguage === 'vi'){
     subjectEmail = `Bạn quên mật khẩu ? Hãy nhập mã ở đưới đây để cập nhật lại nhé !!! `
 }
 
-     let transporter = nodemailer.createTransport({
+    let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
         secure: false, 
         auth: {
-        user: process.env.EMAIL_APP,
-        pass: process.env.EMAIL_APP_PASSWORD,
+        user: 'webk12hht@gmail.com',  
+        pass: 'xtqctgqfabxojurl',
         },
     });
     

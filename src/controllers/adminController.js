@@ -153,7 +153,7 @@ const getAllShop = async (req, res) => {
         return res.status(200).json(data)
     }catch(err){
         return res.status(200).json(err)
-    }
+    } 
 }
 
 // Xl delete
@@ -346,7 +346,7 @@ const addNewItems = async (req, res) => {
 // Xl lấy Dl select from (Gender, Province,Permission )
 const getDataItems = async (req, res) => {
     try{
-        let data = await adminServices.getDataItems(req.query.type)
+        let data = await adminServices.getDataItems(req.query)
         return res.status(200).json(data)
     }catch(e){
         return res.status(200).json(e)
@@ -538,7 +538,21 @@ const updatePriceShip = async (req, res) => {
 }
 
 
+// create data other
+const createDataOther = async (req, res) => {
+    try{
+        let dataPriceShip = req.body
+        let data = await adminServices.createDataOther(dataPriceShip)
+        return res.status(200).json(data)
+        
+    }catch(err){
+        return res.status(200).json(err)
+    }
+}
+
+
 export default {
+    createDataOther,
     updatePriceShip,
     getPriceShip,
     addPriceShip,
