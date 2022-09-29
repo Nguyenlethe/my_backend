@@ -9,9 +9,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Star_shop.init({
-    idShop: DataTypes.INTEGER,
-    itemsId: DataTypes.INTEGER,
-    userId: DataTypes.INTEGER,
+    idShop: DataTypes.STRING,
+    itemsId: DataTypes.STRING,
+    userId: DataTypes.STRING,
     1: DataTypes.INTEGER,
     2: DataTypes.INTEGER,
     3: DataTypes.INTEGER,

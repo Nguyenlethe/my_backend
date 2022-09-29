@@ -6,8 +6,6 @@ import sendEmail from '../utils/sendEmail'
 const { Op } = require("sequelize");
 const salt = bcrypt.genSaltSync(10);
 
-
-
 // Login 
 function loginSystem(dataForm) {
     return new Promise( async(resolve, reject) => {
@@ -223,20 +221,9 @@ function searchItemsNameNav(data){
     return new Promise(async(resolve, reject) =>{
         try{
 
-            // idShop: 'EMPTY',
-            // category: 'All',
-            // type: 'EMPTY',
-            // language: 'vi',
-            // value: 'a',
-            // limit: '5',
-            // page: '1'
-
-            console.log(data)
-
             let dataSearch = []
             const numberLimit =  Number(data.limit)
             const pageNumber = Number(data.page)
-
 
             let count = await db.Items.findAll({attributes: ['id']})
 
@@ -281,10 +268,6 @@ function searchItemsNameNav(data){
                 })
             }
 
-
-
-
-
             // Trong shop vi
             if(data.idShop !== 'EMPTY' && data.language === 'vi'){
                 dataSearch = await db.Items.findAll({
@@ -326,10 +309,6 @@ function searchItemsNameNav(data){
                     nest: true 
                 })
             }
-
-
-
-
 
             // Trong Danh mục vi
             if(data.idShop === 'EMPTY' && data.language === 'vi' && data.category !== 'All'){
@@ -373,9 +352,6 @@ function searchItemsNameNav(data){
                 })
             }
 
-
-
-
             // NOT ITEMS
             if(dataSearch.length === 0){
                 resolve({
@@ -401,10 +377,76 @@ function searchItemsNameNav(data){
     })
 }
 
+// Get likes or Follow
+function getLikeOrFollowItemsShop(data){
+    return new Promise(async(resolve, reject) =>{
+        try{
+
+            let res = []
+            console.log('DATA XUONG :',data)
+
+            // ADD     { idUser: '2', type: 'ADD', idItems: 'ADMTSP02', idShop: '3' }
+            // DELETE  { idUser: '2', type: 'DELETE', idItems: 'ADMTSP01', idShop: '3' }
+
+
+            // Get items like
+            if(data.type && data.type == 'LIKE'){
+                res = await db.FollowLike.findAll({
+                    where: {idUser: data.idUser, status: 'LK'},
+                    attributes: ['idItems'],
+                })
+            }
+
+            // Get shop follow
+            if(data.type && data.type == 'FLOW'){
+                res = await db.FollowLike.findAll({
+                    where: {idUser: data.idUser, status: 'LK'},
+                    attributes: ['idItems'],
+                })
+            }
+
+            // LIKE
+            if(data.type && data.type == 'ADD'){
+                await db.FollowLike.create({
+                    idUser: data.idUser,
+                    idShop: data.idShop,
+                    idItems: data.idItems,
+                    status:  'LK',
+                })
+            }
+
+            // DELETE LIKE
+            if(data.type && data.type == 'DELETE'){
+                await db.FollowLike.destroy({
+                    where: {
+                        idUser: data.idUser,
+                        idItems: data.idItems,
+                        idShop: data.idShop,
+                        status:  'LK',
+                    }
+                })
+            }
+
+            console.log('ITEMS LIKE :', res)
+
+
+            resolve({
+                errCode: 0,
+                errMessage: 'OK',
+                data: res
+            })
+          
+        }
+        catch(error){
+            reject('Error reject :',error)
+        }
+    })
+}
 
 
 
 export default {
+    getLikeOrFollowItemsShop,
     updatePassword, 
     loginSystem, 
     forgotPassword,

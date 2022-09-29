@@ -64,7 +64,19 @@ const searchItemsNameNav = async (req, res) => {
 }
 
 
+const getLikeOrFollowItemsShop = async (req, res) => {
+    try{
+        let dataClient = req.query
+        let data = await appServices.getLikeOrFollowItemsShop(dataClient)
+        return res.status(200).json(data)
+    }catch(e){
+        return res.status(200).json(e)
+    }
+}
+
+
 export default {
+    getLikeOrFollowItemsShop,
     searchItemsNameNav,
     createNewUser,
     updatePassword,

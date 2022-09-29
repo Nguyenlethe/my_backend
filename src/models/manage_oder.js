@@ -8,9 +8,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Manage_oder.init({
-    itemsId: DataTypes.INTEGER,
-    userGuestId: DataTypes.INTEGER,
-    idShop:  DataTypes.INTEGER,
+    itemsId: DataTypes.STRING,
+    userGuestId: DataTypes.STRING,
+    idShop:  DataTypes.STRING,
     itemsNumber: DataTypes.INTEGER,
     timeReceived: DataTypes.STRING, 
     timeCreate: DataTypes.STRING,

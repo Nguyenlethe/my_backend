@@ -787,7 +787,7 @@ function getDataItems(dataClient){
         try{
             let data = {} 
             data.inputType = []
-            console.log('DATA XUONGS :',dataClient)
+            // console.log('DATA XUONGS :',dataClient)
             // { amount: 'All',idItems: 'EMPTY', idShop: 'EMPTY', category: 'EMPTY', type: 'EMPTY' }
 
             // All items
@@ -830,6 +830,7 @@ function getDataItems(dataClient){
                         {model: db.Discount, as: 'discountData', attributes: ["code","valueEn", "valueVi"]},
                         {model: db.Category, as: 'categoryData', attributes: ["code","valueEn", "valueVi"]},
                         {model: db.Type, as: 'typeData', attributes: ["code","valueEn", "valueVi"]},
+
                         {model: db.Items_info,as: 'infoItemsData', 
                             attributes: ['describeHtmlEn','describeTextEn','describeHtmlVi','describeTextVi','trademark','production','sentFrom','texture',
                         ],
@@ -846,6 +847,95 @@ function getDataItems(dataClient){
                     nest: true 
                 })
 
+                let countOrContentFacebackItems = await db.Feedback.findAll({
+                    where: {itemsId: dataClient.idItems},
+                })
+                
+                let countLike = await db.FollowLike.findAll({
+                    attributes: ["id"], 
+                    where: {idItems: dataClient.idItems},
+                })
+
+                let allStar = await db.Star_shop.findAll({
+                    attributes: ["1","2","3","4","5"], 
+                    where: {itemsId: dataClient.idItems},
+                })
+
+                // Số lượng sp đã bán
+                let sold = await db.Manage_oder.findAll({
+                    where: {itemsId: dataClient.idItems, status: 'SUC'},
+                })
+
+
+                // Nếu có sao
+                if(allStar) {
+                    let countOneStart = {}
+                    let countTotalStart = {}
+
+                    const totalStart = function (key, star) {
+                        if(countOneStart[key]){
+                            countOneStart[key] = star + countOneStart[key]
+                        }
+                        if(!countOneStart[key]){
+                            countOneStart[key] = star 
+                        }
+                    }
+
+                    allStar.map(star => {
+                        if(star['5']){
+                            totalStart('5',star['5'])
+                        }
+
+                        if(star['4']){
+                            totalStart('4',star['4'])
+                        }
+
+                        if(star['3']){
+                            totalStart('3',star['3'])
+                        }
+
+                        if(star['2']){
+                            totalStart('2',star['2'])
+                        }
+
+                        if(star['1']){
+                            totalStart('1',star['1'])
+                        }
+                    })
+
+                    // Tính số lượng sao
+                    for(let key in countOneStart){
+                        countTotalStart[key] = countOneStart[key] * Number(key)
+
+                        if(!countTotalStart.countStart){
+                            countTotalStart.countStart = countOneStart[key] 
+                        }else{
+                            countTotalStart.countStart = countTotalStart.countStart + countOneStart[key] 
+                        }
+                    }
+
+                    // Tổng số lượng các sao
+                    for(let key in countTotalStart){
+                        if(countTotalStart.total && key !== 'countStart'){
+                            countTotalStart.total  = countTotalStart.total + countTotalStart[key] 
+                        }
+                        if(!countTotalStart.total && key !== 'countStart'){
+                            countTotalStart.total = countTotalStart[key] 
+                        }
+                    }
+
+                    // Tính trung bình sao
+                    if(countTotalStart.total && countTotalStart.countStart){
+                        countTotalStart.medium = countTotalStart.total / countTotalStart.countStart
+                    }
+
+                    allStar = {medium: countTotalStart.medium, ...countOneStart}
+                }
+
+                data.inputType.sold = sold
+                data.inputType.countLike = countLike 
+                data.inputType.allStar = allStar
+                data.inputType.countOrContentFacebackItems = countOrContentFacebackItems
                 data.inputType = [data.inputType]
             }
 
@@ -970,61 +1060,77 @@ function deleteItems(id){
 function editItems(data){
     return new Promise(async(resolve, reject) =>{
         try{
-            
+            let newPriceUS = 0
+            let newPrice = 0
+            let price = 0
+            let priceUS = 0
+            let discounts = '0'
+
+
+
+            console.log(data)
+
             // Nếu sửa ảnh 
-            if(data && data.dataImgFile.length > 0 && data.dataItemsColorImgages.length > 0){
+            if(data.dataItemsColorImgages.length > 0){
 
                 // Set name img file 
                 data.dataItemsColorImgages.map(img => {
                     data.dataImgFile.map(imgFile => {
                         if(img.image === imgFile.originalname){
-                            console.log(imgFile.filename, img.image)
                             img.image = imgFile.filename
                         }
                     })
                 })
-                
-                let imgOld = await db.Items_color_image.findAll({where: {itemId: data.dataItemsColorImgages[0].itemId},attributes: ['image']})
+
                 
                 // Lấy ra img cũ
                 let dataImgOld = [] 
+                let imgOld = await db.Items_color_image.findAll({where: {itemId: data.dataItemsColorImgages[0].itemId},attributes: ['image']})
                 imgOld.map(item => dataImgOld.push(item.image))
+                
+                
                 
                 // lấy ra img mới
                 let dataImgNew = [] 
                 data.dataItemsColorImgages.map(item => dataImgNew.push(item))
-           
-                // Lấy ra img thay đổi
-                let dataImgNewSave = dataImgNew
-                let dataImgOlddalete = dataImgOld
-                dataImgOld.map(item => {
-                    dataImgNew.map((img,index) => {
-                        if(item === img.image){
-                            if(dataImgNewSave[index]){
-                                dataImgNewSave[index] = ''
-                            }
-                            if(dataImgOlddalete[index]){
-                                dataImgOlddalete[index] = ''
-                            }
+                
+              
+                // // Lấy ra img thay đổi
+                let dataImgOldDelete = dataImgOld
+                dataImgNew.map((img,indexNew) => {
+                    dataImgOld.map((item, indexOld) => {
+                        if(item == img.image) {
+                            dataImgOldDelete[indexOld] = ''
                         }
                     })
                 })
 
+           
+                
 
                 // Xóa ảnh cũ
-                let imgDelete = dataImgOlddalete.filter(item => item.trim() !== '')
-                console.log('Ảnh Xóa',imgDelete)
-                imgDelete.length > 0 && imgDelete.map(img => {
+                dataImgOldDelete = dataImgOldDelete.filter(item => item.trim() !== '')
+
+
+               
+
+
+                dataImgOldDelete.length > 0 && dataImgOldDelete.map(img => {
                     fs.rmSync(`src/public/images/Items/${img}`, {
                         force: true,
                     });
                 })
+
+
+               
 
                 // Delete data img color
                 await db.Items_color_image.destroy({where: {itemId: data.dataItemsColorImgages[0].itemId}})
 
                 // Thêm data bảng items_color_images
                 await db.Items_color_image.bulkCreate(data.dataItemsColorImgages)
+
+
             }
 
             // Chỉ sửa màu không sửa ảnh
@@ -1039,9 +1145,31 @@ function editItems(data){
             // Lấy ra giá cũ
             let oldDataPrice = await db.Items.findOne({ 
                 where: {idItems: data.dataItems.idItems},
-                attributes: ['price','priceUS'],     
+                attributes: ['price','priceUS','newPrice','newPriceUS','discounts'],     
             })
 
+            console.log('COUNT OLD : ',oldDataPrice )
+
+            if(data.dataItems.newPriceUS != '' && data.dataItems.newPrice != ''){
+                newPriceUS = data.dataItems.newPriceUS
+                newPrice = data.dataItems.newPrice
+                price = oldDataPrice.newPrice == 0 ? oldDataPrice.price : oldDataPrice.newPrice
+                priceUS = oldDataPrice.newPriceUS == 0 ? oldDataPrice.priceUS : oldDataPrice.newPriceUS
+            }else{
+                newPriceUS = oldDataPrice.newPriceUS
+                newPrice = oldDataPrice.newPrice
+                price = oldDataPrice.price
+                priceUS = oldDataPrice.priceUS
+            }
+
+            if(data.dataItems.discount == oldDataPrice.discounts) {
+                discounts = oldDataPrice.discounts
+            }else{
+                discounts = data.dataItems.discount
+            }
+
+            console.log('NEW COUNT :',price, priceUS,newPrice,newPriceUS)
+      
             // updata data items
             let resItems = await db.Items.update(
                 {
@@ -1050,13 +1178,13 @@ function editItems(data){
                     manageId: data.dataItems.manageId,
                     category: data.dataItems.category,
                     type: data.dataItems.type, 
-                    discounts: data.dataItems.discount || '0',
+                    discounts: discounts,
                     name: data.dataItems.name,
                     nameEn: data.dataItems.nameEn,
-                    price: oldDataPrice.price,
-                    priceUS: oldDataPrice.priceUS,
-                    newPrice: data.dataItems.newPrice,
-                    newPriceUS: data.dataItems.newPriceUS,
+                    price: price,
+                    priceUS: priceUS,
+                    newPrice: newPrice,
+                    newPriceUS: newPriceUS,
                 },
                 {where :{idItems: data.dataItems.idItems}}
             )
@@ -1069,29 +1197,32 @@ function editItems(data){
                 })
             } 
             
-            // Update barng item info 
-            let itemsInfo = await db.Items_info.update(
-                { 
-                    itemsId: data.dataItemsInfo.itemsId,
-                    describeHtmlEn: data.dataItemsInfo.describeHtmlEn,
-                    describeTextEn: data.dataItemsInfo.describeTextEn,
-                    describeHtmlVi: data.dataItemsInfo.describeHtmlVi,
-                    describeTextVi: data.dataItemsInfo.describeTextVi, 
-                    trademark: data.dataItemsInfo.trademark,
-                    production: data.dataItemsInfo.production,
-                    sentFrom: data.dataItemsInfo.sentFrom,
-                    texture: data.dataItemsInfo.texture,
-                },
-                {where: {itemsId: data.dataItems.idItems}}
-            )
+            if(data.isEditInfoItems == true){
+                // Update barng item info 
+                let itemsInfo = await db.Items_info.update(
+                    { 
+                        itemsId: data.dataItemsInfo.itemsId,
+                        describeHtmlEn: data.dataItemsInfo.describeHtmlEn,
+                        describeTextEn: data.dataItemsInfo.describeTextEn,
+                        describeHtmlVi: data.dataItemsInfo.describeHtmlVi,
+                        describeTextVi: data.dataItemsInfo.describeTextVi, 
+                        trademark: data.dataItemsInfo.trademark,
+                        production: data.dataItemsInfo.production,
+                        sentFrom: data.dataItemsInfo.sentFrom,
+                        texture: data.dataItemsInfo.texture,
+                    },
+                    {where: {itemsId: data.dataItems.idItems}}
+                )
+                
+                // Nếu upload items không thành công 
+                if(itemsInfo.length === 0) {
+                    resolve({
+                        errCode: -1,
+                        errMessage: 'Upload itemsInfo error !!!'
+                    })
+                } 
+            }
 
-            // Nếu upload items không thành công 
-            if(itemsInfo.length === 0) {
-                resolve({
-                    errCode: -1,
-                    errMessage: 'Upload itemsInfo error !!!'
-                })
-            } 
 
             // Upload data size + amount nếu size tồn tại 
             if(data.dataItemsSizeAmount){
@@ -1542,7 +1673,7 @@ function createNewDiscounts(data){
     })
 }
 
-// Get items where
+// Get voucher
 function getVoucher(data){
     return new Promise(async(resolve, reject) =>{
         try{
@@ -1633,7 +1764,6 @@ function deleteVoucher(data){
     return new Promise(async(resolve, reject) =>{
         try{
 
-            console.log(data)
 
             if(data.category === '') data.category = 'EMPTY'
             if(data.type === '') data.type = 'EMPTY'
@@ -1966,7 +2096,6 @@ function createDataOther(data){
     return new Promise(async(resolve, reject) =>{
         try{
 
-            console.log(data.dataType)
 
             // Color
             if(data.dataTabelColor && data.type === 'COLOR'){
@@ -2100,14 +2229,10 @@ function createDataOther(data){
                 }
             }
 
-     
-
-           
             resolve({
                 errCode: 0,
                 message: 'OK',
             })
-
         }
         catch(error){
             reject('Error reject :',error)

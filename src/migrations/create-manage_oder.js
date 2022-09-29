@@ -10,15 +10,15 @@ module.exports = {
       },
       itemsId: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       userGuestId: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       idShop: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       itemsNumber: {
         type: Sequelize.INTEGER  

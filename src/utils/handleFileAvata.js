@@ -15,7 +15,6 @@ const storageAvata = multer.diskStorage({
     }
 })
 
-
 // Kiểm tra xem tải đúng file không
 const imageFilterAvata = function(req, file, cb) {
     // Nếu mà name file không match với các đôi file trên này thì sẽ báo lỗi ra
@@ -25,7 +24,6 @@ const imageFilterAvata = function(req, file, cb) {
     }
     cb(null, true);
 }
-
 
 // Lưu file,tên file
 const storageAvataShop = multer.diskStorage({
@@ -37,7 +35,6 @@ const storageAvataShop = multer.diskStorage({
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
 })
-
 
 // Kiểm tra xem tải đúng file không
 const imageFilterAvataShop = function(req, file, cb) {
@@ -51,15 +48,20 @@ const imageFilterAvataShop = function(req, file, cb) {
 
 // Lưu file,tên file
 const storageImgItems = multer.diskStorage({
+    
     destination: function(req, file, cb) {
         cb(null, appRoot + "/src/public/images/Items");
     },
-
+    
     filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-})
 
+        let random = Math.floor(Math.random() * 1000000000000000);
+        console.log(random)
+
+        cb(null, file.fieldname + '-' + Date.now() + random + path.extname(file.originalname));
+    }
+
+})
 
 // Kiểm tra xem tải đúng file không
 const imageFilterImgItems = function(req, file, cb) {
@@ -70,10 +72,5 @@ const imageFilterImgItems = function(req, file, cb) {
     }
     cb(null, true);
 }
-
-
-
-
-
 
 export { storageAvata, storageAvataShop,storageImgItems, imageFilterAvataShop,imageFilterAvata ,imageFilterImgItems} 

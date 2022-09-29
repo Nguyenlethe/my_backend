@@ -8,9 +8,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Feedback.init({
-    itemsId: DataTypes.INTEGER,
-    userId: DataTypes.INTEGER,
-    idShop:  DataTypes.INTEGER,
+    itemsId: DataTypes.STRING,
+    userId: DataTypes.STRING,
+    idShop:  DataTypes.STRING,
     content: DataTypes.STRING,
     status: DataTypes.STRING, 
     timeFeedback: DataTypes.STRING,

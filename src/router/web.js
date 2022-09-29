@@ -49,6 +49,7 @@ function initWebRoutes(app) {
     router.post('/system/forgot-password',    appController.forgotPassword       )
     router.post('/system/update-password',    appController.updatePassword       )
     router.get('/admin/search-name-items',    appController.searchItemsNameNav   )
+    router.get('/app/get-data-tabel-followLikes', appController.getLikeOrFollowItemsShop)
 
 
     return app.use('/', router)

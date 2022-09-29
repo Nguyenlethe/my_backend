@@ -372,10 +372,12 @@ const editDataItems = async (req, res) => {
             if(!err){
                 try{
 
+
                     // lấy data truyền xuống
                     let arrayImgItems = [...req.files]
                     let data =  {
                         dataImgFile: arrayImgItems, 
+                        isEditInfoItems: JSON.parse(req.body.editDetailItems), 
                         dataItems: JSON.parse(req.body.dataItems), 
                         dataItemsInfo: JSON.parse(req.body.dataItemsInfo),
                         dataItemsColorImgages: JSON.parse(req.body.dataItemsColorImgages),
