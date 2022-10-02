@@ -18,6 +18,8 @@ module.exports = (sequelize, DataTypes) => {
       Items.hasMany(models.Items_discount, {foreignKey: 'itemsId'})
 
 
+      Items.hasMany(models.Manage_oder, {foreignKey: 'itemsId'})
+
 
 
     }

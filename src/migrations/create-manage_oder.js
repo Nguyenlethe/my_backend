@@ -38,6 +38,12 @@ module.exports = {
       voucherApplyTow: {
         type: Sequelize.INTEGER
       },
+      color: {
+        type: Sequelize.STRING
+      },
+      size: {
+        type: Sequelize.INTEGER
+      },
       status: {
         type: Sequelize.STRING
       },

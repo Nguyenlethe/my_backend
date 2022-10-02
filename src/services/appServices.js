@@ -16,10 +16,17 @@ function loginSystem(dataForm) {
                     where: {
                         email: dataForm.account,
                     },
-                    attributes: {
-                        exclude: ['phoneNumber','gender','district','wards']      
-                    },
+                    include: [
+                        { model: db.Province, as: 'provinceData', attributes: ["valueEn", "valueVi"]},
+                        { model: db.Province, as: 'districtData', attributes: ["valueEn", "valueVi"]},
+                        { model: db.Province, as: 'wardsData', attributes: ["valueEn", "valueVi"]}
+                    ],
+                    raw : true,
+                    nest: true
                 })
+
+                console.log(res)
+
                 if(res){
                     let password = hashPassword(dataForm.password,res.password, 'login');
                     if(password){
@@ -369,7 +376,6 @@ function searchItemsNameNav(data){
                 data: dataSearch,
                 count: count.length
             })
-            
         }
         catch(error){
             reject('Error reject :',error)
@@ -443,9 +449,119 @@ function getLikeOrFollowItemsShop(data){
     })
 }
 
+// Delete voucher Expired
+function deleteVoucherExpired(){
+    return new Promise(async(resolve, reject) =>{
+        try{
 
+            let resVoucher = await db.Items_discount.findAll({
+                attributes: ['id', 'dayEnd'],
+                raw : true, 
+                nest: true 
+            })
+
+            let arrayIdVoucherDelete = []
+            if(resVoucher && resVoucher.length > 0){
+                
+                resVoucher.map(day => {
+                    let today = new Date();
+                    const dayEndVouCher = new Date(`${day.dayEnd}`)
+                    const timeVoucher = dayEndVouCher.getTime()
+                    const timeNow = today.getTime()
+                    today = today.setHours(0, 0, 0, 0);
+
+                    if(timeVoucher < timeNow){
+                        arrayIdVoucherDelete.push(day.id)
+                    }
+                })
+            }
+
+
+            await db.Items_discount.destroy({   
+                where: {id: { [Op.in]: arrayIdVoucherDelete}}
+            })
+    
+
+            resolve({
+                errCode: 0,
+                errMessage: 'OK',
+            })
+          
+        }
+        catch(error){
+            reject('Error reject :',error)
+        }
+    })
+}
+
+
+// add items to cart
+function addNewItemsToCart(dataClient) {
+    return new Promise( async(resolve, reject) => {
+        try{
+            
+            await db.Manage_oder.create({
+                itemsId: dataClient.itemsId,
+                userGuestId: dataClient.userGuestId,
+                idShop:  dataClient.idShop,
+                itemsNumber: dataClient.itemsNumber,
+                timeCreate: dataClient.timeCreate,
+                status: 'CART',
+                color: dataClient.color,
+                size: dataClient.size
+            })
+                
+            resolve({
+                errCode: 0,
+                messages: 'OK'
+            })
+           
+        }
+        catch(err){
+            reject(err)
+        }
+    })
+}
+
+// get list items cart
+function getListCart(id) {
+    return new Promise( async(resolve, reject) => {
+        try{
+            
+            console.log('DATA CART :',id)
+            let res = await db.Manage_oder.findAll({
+                where: {userGuestId: id, status: "CART"},
+                include: [
+                    {model: db.Items,
+                        include: [
+                            {model: db.Items_color_image, as:'dataImgItems', attributes: ["image"] },
+                        ],
+                        group: ['idItems']
+                    }
+                ],
+                group: ['id'],
+                raw : true, 
+                nest: true 
+            })
+         
+                
+            resolve({
+                errCode: 0,
+                errMessage: 'OK',
+                data: res
+            })
+           
+        }
+        catch(err){
+            reject(err)
+        }
+    })
+}
 
 export default {
+    getListCart,
+    addNewItemsToCart,
+    deleteVoucherExpired,
     getLikeOrFollowItemsShop,
     updatePassword, 
     loginSystem, 
@@ -453,3 +569,4 @@ export default {
     createNewUser,
     searchItemsNameNav
 }
+

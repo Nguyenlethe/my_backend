@@ -20,20 +20,6 @@ module.exports = (sequelize, DataTypes) => {
 
 
 
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
     }
   };
   Items_discount.init({

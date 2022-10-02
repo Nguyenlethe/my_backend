@@ -7,8 +7,8 @@ module.exports = (sequelize, DataTypes) => {
       Province.hasMany(models.User, { foreignKey: 'province', as : 'provinceData' })
       Province.hasMany(models.User, { foreignKey: 'district', as : 'districtData' })
       Province.hasMany(models.User, { foreignKey: 'wards', as : 'wardsData' })
-
       Province.hasMany(models.Ship, { foreignKey: 'province'})
+
 
 
  

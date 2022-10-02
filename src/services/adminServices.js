@@ -276,7 +276,6 @@ function createNewUser(data){
 function createNewShop(data){
     return new Promise(async(resolve, reject) =>{
         try{
-            console.log('data Create :',data)
             let user = await db.User.findOne({where: {id: data.manageId}})
             if(user){
                 await db.User.update({permission: data.permission},{where: {id: data.manageId}})
@@ -485,7 +484,6 @@ function deleteShop(data){
     })
 }
 
-
 // API sửa user
 function changeUser(data){
     return new Promise(async(resolve, reject) =>{
@@ -677,6 +675,7 @@ function getOneShop(id){
 function addNewItems(data){
     return new Promise(async(resolve, reject) =>{
         try{
+
             // Check items đã tồn tại chưa
             let res = await db.Items.findOne({
                 where: { idItems: data.items.idItems},
@@ -705,9 +704,7 @@ function addNewItems(data){
                     newPrice: data.items.newPriceUS ? data.items.newPriceUS  : '',
                 })
                 
-
                 if(resItems){
-
                     // Thêm data bảmg Items_info
                     let Items_info = await db.Items_info.create({ 
                         itemsId: data.items_infos.itemsId ? data.items_infos.itemsId : '',
@@ -747,28 +744,28 @@ function addNewItems(data){
                                     errMessage: 'Add data items_size_amount error',
                                 })
                                 // Xóa data ở các bảng nếu có lỗi
-                                await db.Items.destroy({where: {idItems: dataItems.idItems}})
-                                await db.Items_info.destroy({where: {itemsId:  dataItems.idItems}})
-                                await db.Items_color_image.destroy({where: {itemId: dataItems.idItems}})
+                                await db.Items.destroy({where: {idItems: data.items.idItems}})
+                                await db.Items_info.destroy({where: {itemsId:  data.items.idItems}})
+                                await db.Items_color_image.destroy({where: {itemId: data.items.idItems}})
                             }
                             resolve({
                                 errCode: 0,
                                 errMessage: 'Ok',
                             })
                         }
-                        await db.Items_color_image.destroy({where: {itemId: dataItems.idItems}})
+                        await db.Items_color_image.destroy({where: {itemId: data.items.idItems}})
                         resolve({
                             errCode: -1,
                             errMessage: 'Add data items_color_images error',
                         })
                     }
-                    await db.Items_info.destroy({where: {itemsId:  dataItems.idItems}})
+                    await db.Items_info.destroy({where: {itemsId:  data.items.idItems}})
                     resolve({
                         errCode: -1,
                         errMessage: 'Add data Items_info error',
                     })
                 }
-                await db.Items.destroy({where: {idItems: dataItems.idItems}})
+                await db.Items.destroy({where: {idItems: data.items.idItems}})
                 resolve({
                     errCode: -1,
                     errMessage: 'Add data Items error',
@@ -824,7 +821,6 @@ function getDataItems(dataClient){
                 data.inputType = await db.Items.findOne({
                     where: {idItems: dataClient.idItems},
                     order: [['createdAt', 'DESC']],      
-                    attributes: { exclude: ['category','type'] },
                     include: [
                         {model: db.Store, as: 'storeData', attributes: ["manageId","nameShop"]},
                         {model: db.Discount, as: 'discountData', attributes: ["code","valueEn", "valueVi"]},
@@ -847,6 +843,8 @@ function getDataItems(dataClient){
                     nest: true 
                 })
 
+                // console.log('OK :',data.inputType)
+
                 let countOrContentFacebackItems = await db.Feedback.findAll({
                     where: {itemsId: dataClient.idItems},
                 })
@@ -866,6 +864,47 @@ function getDataItems(dataClient){
                     where: {itemsId: dataClient.idItems, status: 'SUC'},
                 })
 
+                // Lấy all giá ship
+                let dataPriceShip = await db.Ship.findAll({
+                    attributes: {exclude: ["createdAt","id","updatedAt","province"]},
+                    where: {itemsId: dataClient.idItems},
+                    include: [
+                        {model: db.Province,attributes: ["keyMap","type","id","valueEn","valueVi"]},
+                    ],
+                    raw : true ,
+                    nest : true
+                })
+
+                // 'category','type'
+                // console.log('OK :',data.inputType.category)
+                // console.log('OK :',data.inputType.type)
+
+                // Lấy all giá ship category
+                let dataPriceShipCategory = await db.Ship.findAll({
+                    attributes: {exclude: ["createdAt","id","updatedAt","province"]},
+                    where: {category: data.inputType.category,itemsId: 'EMPTY',  categoryType: 'EMPTY'},
+                    include: [
+                        {model: db.Province,attributes: ["keyMap","type","id","valueEn","valueVi"]},
+                    ],
+                    raw : true ,
+                    nest : true
+                })
+
+                // Lấy all giá ship category type
+                let dataPriceShipCategoryType = await db.Ship.findAll({
+                    attributes: {exclude: ["createdAt","id","updatedAt","province"]},
+                    where: {
+                        categoryType: data.inputType.type,
+                        itemsId: 'EMPTY'
+                    },
+                    include: [
+                        {model: db.Province,attributes: ["keyMap","type","id","valueEn","valueVi"]},
+                    ],
+                    raw : true ,
+                    nest : true
+                })
+
+                // console.log('TYPE :',dataPriceShipCategoryType, 'CATE :',dataPriceShipCategory)
 
                 // Nếu có sao
                 if(allStar) {
@@ -932,6 +971,9 @@ function getDataItems(dataClient){
                     allStar = {medium: countTotalStart.medium, ...countOneStart}
                 }
 
+                data.inputType.dataShipCategory = dataPriceShipCategory
+                data.inputType.dataShipCategoryType = dataPriceShipCategoryType
+                data.inputType.dataShip = dataPriceShip
                 data.inputType.sold = sold
                 data.inputType.countLike = countLike 
                 data.inputType.allStar = allStar
@@ -1068,7 +1110,6 @@ function editItems(data){
 
 
 
-            console.log(data)
 
             // Nếu sửa ảnh 
             if(data.dataItemsColorImgages.length > 0){
@@ -1148,7 +1189,6 @@ function editItems(data){
                 attributes: ['price','priceUS','newPrice','newPriceUS','discounts'],     
             })
 
-            console.log('COUNT OLD : ',oldDataPrice )
 
             if(data.dataItems.newPriceUS != '' && data.dataItems.newPrice != ''){
                 newPriceUS = data.dataItems.newPriceUS
@@ -1168,7 +1208,6 @@ function editItems(data){
                 discounts = data.dataItems.discount
             }
 
-            console.log('NEW COUNT :',price, priceUS,newPrice,newPriceUS)
       
             // updata data items
             let resItems = await db.Items.update(
@@ -1223,7 +1262,6 @@ function editItems(data){
                 } 
             }
 
-
             // Upload data size + amount nếu size tồn tại 
             if(data.dataItemsSizeAmount){
                 if(!data.dataItemsSizeAmount.data){
@@ -1238,7 +1276,6 @@ function editItems(data){
                         dataSize.push(data.dataItemsSizeAmount[key].size)
                     }
                     
-
                     // delete size old
                     await db.Items_size_amount.destroy({   
                             where: {itemsId: idItems[0], size: { [Op.in]: [...dataSize]}}
@@ -1247,12 +1284,10 @@ function editItems(data){
                     
                     // add new size mount 
                     await db.Items_size_amount.bulkCreate(newNataItemsSizeAmount)
-                    
                     resolve({
                         errCode: 0,
                         errMessage: 'Ok'
                     })
-
                 }
                 resolve({
                     errCode: 0,
@@ -1373,7 +1408,6 @@ function getItemsWhere(data){
 function getAllDiscountItems(type){
     return new Promise(async(resolve, reject) =>{
         try{
-            console.log('data xuoonsg :',type)
 
             if(!type){
                 resolve({
@@ -1505,8 +1539,21 @@ function createNewDiscounts(data){
 
                     console.log('UPDATE :',data)
 
+                    // idShop: 3,
+                    // codeReduce: '0.2',
+                    // unitPrice: 'MG12',
+                    // startDay: 'Sat Sep 17 2022 12:30:00 GMT+0700 (Indochina Time)',
+                    // startEnd: 'Sat Oct 01 2022 09:30:00 GMT+0700 (Indochina Time)',
+                    // forItemCategory: 'All',
+                    // forItemType: 'ST06',
+                    // itemsId: 'ADMTSP02',
+                    // type: 'UPDATE'
+
                     let res = ''
                     if(data.itemsId !== '' && data.forItemType !== '' && data.forItemCategory !== ''){
+
+                        console.log('VO :',data)
+
                         // Update discount items
                         res = await db.Items_discount.update(
                             {
@@ -1516,11 +1563,13 @@ function createNewDiscounts(data){
                                 dayStart: data.startDay,
                                 dayEnd: data.startEnd,
                                 forItemCategory: data.forItemCategory,
-                                forItemType: data.forItemType || 'EMPTY',
-                                itemsId: data.itemsId || 'EMPTY',
+                                forItemType: data.forItemType ,
+                                itemsId: data.itemsId ,
                             },
-                            {where :{itemsId: data.itemsId,forItemType: data.forItemType, forItemCategory: data.forItemCategory }}
+                            {where :{itemsId: data.itemsId}}
                         )
+
+                        console.log(res)
                     }
 
                     if(data.forItemType !== '' && data.itemsId === ''){
@@ -1574,7 +1623,6 @@ function createNewDiscounts(data){
                         nextError('WARN',dataResDiscountItems)
 
                     }else{
-
                         // Thêm discount items
                         let res = await db.Items_discount.create({
                             idShop: data.idShop,

@@ -49,7 +49,14 @@ function initWebRoutes(app) {
     router.post('/system/forgot-password',    appController.forgotPassword       )
     router.post('/system/update-password',    appController.updatePassword       )
     router.get('/admin/search-name-items',    appController.searchItemsNameNav   )
-    router.get('/app/get-data-tabel-followLikes', appController.getLikeOrFollowItemsShop)
+    router.get('/app/get-data-tabel-followLikes',appController.getLikeOrFollowItemsShop)
+    router.post('/system/delete-voucher-expired',appController.deleteVoucherExpired)
+    router.post('/system/add-items-to-cart',  appController.addNewItemsToCart)
+    router.get('/app/get-list-items-cart',  appController.getListCart)
+
+
+
+
 
 
     return app.use('/', router)
