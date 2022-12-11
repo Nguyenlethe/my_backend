@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('rate_feedback', {
-    id: {
+    await queryInterface.createTable("rate_feedback", {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -10,32 +10,32 @@ module.exports = {
       },
       idfeedback: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       idUserRepFeedback: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       repContent: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       status: {
-        type: Sequelize.STRING  
+        type: Sequelize.STRING,
       },
       timeRepFeedback: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('rate_feedback');
-  }
+    await queryInterface.dropTable("rate_feedback");
+  },
 };

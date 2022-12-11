@@ -1,10 +1,8 @@
-
-
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('cart_lists', {
-    id: {
+    await queryInterface.createTable("cart_lists", {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -12,47 +10,47 @@ module.exports = {
       },
       itemsId: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       userId: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       itemsName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       itemsDetail: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       itemsNumber: {
-        type: Sequelize.INTEGER  
+        type: Sequelize.INTEGER,
       },
       itemsPrice: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       image: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       imageLink: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       itemsColor: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       itemsSize: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('cart_lists');
-  }
+    await queryInterface.dropTable("cart_lists");
+  },
 };

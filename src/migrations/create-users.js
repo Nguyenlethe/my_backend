@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Users', {
-    id: {
+    await queryInterface.createTable("Users", {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -10,70 +10,70 @@ module.exports = {
       },
       email: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       password: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       firstName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       lastName: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       gender: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       permission: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       phoneNumber: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       avata: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       avataLink: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       birthday: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       coverImage: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       province: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       district: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       wards: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       addressDetails: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       token: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Users');
-  }
+    await queryInterface.dropTable("Users");
+  },
 };

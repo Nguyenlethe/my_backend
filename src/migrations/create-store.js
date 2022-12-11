@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('stores', {
-    id: {
+    await queryInterface.createTable("stores", {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -10,50 +10,50 @@ module.exports = {
       },
       manageId: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       permission: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       nameShop: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       addressShop: {
-        type: Sequelize.STRING  
+        type: Sequelize.STRING,
       },
       emailShop: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       phoneNumber: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       pay: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       province: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       follow: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       avata: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       coverImage: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('stores');
-  }
+    await queryInterface.dropTable("stores");
+  },
 };

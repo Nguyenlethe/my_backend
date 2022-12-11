@@ -1,10 +1,8 @@
-
-
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('items_discounts', {
-    id: {
+    await queryInterface.createTable("items_discounts", {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -13,40 +11,40 @@ module.exports = {
 
       idShop: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       codeReduce: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       unitPrice: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       dayEnd: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       dayStart: {
-        type: Sequelize.STRING  
+        type: Sequelize.STRING,
       },
       forItemCategory: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       forItemType: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       itemsId: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('items_discounts');
-  }
+    await queryInterface.dropTable("items_discounts");
+  },
 };

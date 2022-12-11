@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('trademarks', {
+    await queryInterface.createTable("trademarks", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -9,31 +9,31 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       trademarkId: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       idUserCreate: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       code: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       valueEn: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       valueVi: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('trademarks');
-  }
+    await queryInterface.dropTable("trademarks");
+  },
 };

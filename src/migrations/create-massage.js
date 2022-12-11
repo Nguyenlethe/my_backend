@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('messages', {
+    await queryInterface.createTable("messages", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -9,31 +9,31 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       idRoom: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       massage: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       idUser: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       idShop: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       permission: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('messages');
-  }
+    await queryInterface.dropTable("messages");
+  },
 };

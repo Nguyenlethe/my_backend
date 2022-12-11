@@ -1,76 +1,92 @@
-const multer = require('multer'); 
+const multer = require("multer");
 
-const path = require('path');
-var appRoot = require('app-root-path'); 
-
+const path = require("path");
+var appRoot = require("app-root-path");
 
 // Lưu file,tên file
 const storageAvata = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, appRoot + "/src/public/images/Avata");
-    },
+  destination: function (req, file, cb) {
+    cb(null, appRoot + "/src/public/images/Avata");
+  },
 
-    filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-})
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
 
 // Kiểm tra xem tải đúng file không
-const imageFilterAvata = function(req, file, cb) {
-    // Nếu mà name file không match với các đôi file trên này thì sẽ báo lỗi ra
-    if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
-        req.fileValidationError = 'Định dạng file không được hỗ trợ !!!';
-        return cb(new Error('Định dạng file không được hỗ trợ !!!'), false);
-    }
-    cb(null, true);
-}
+const imageFilterAvata = function (req, file, cb) {
+  // Nếu mà name file không match với các đôi file trên này thì sẽ báo lỗi ra
+  if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
+    req.fileValidationError = "Định dạng file không được hỗ trợ !!!";
+    return cb(new Error("Định dạng file không được hỗ trợ !!!"), false);
+  }
+  cb(null, true);
+};
 
 // Lưu file,tên file
 const storageAvataShop = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, appRoot + "/src/public/images/AvataShop");
-    },
+  destination: function (req, file, cb) {
+    cb(null, appRoot + "/src/public/images/AvataShop");
+  },
 
-    filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-})
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
 
 // Kiểm tra xem tải đúng file không
-const imageFilterAvataShop = function(req, file, cb) {
-    // Nếu mà name file không match với các đôi file trên này thì sẽ báo lỗi ra
-    if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
-        req.fileValidationError = 'Định dạng file không được hỗ trợ !!!';
-        return cb(new Error('Định dạng file không được hỗ trợ !!!'), false);
-    }
-    cb(null, true);
-}
+const imageFilterAvataShop = function (req, file, cb) {
+  // Nếu mà name file không match với các đôi file trên này thì sẽ báo lỗi ra
+  if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
+    req.fileValidationError = "Định dạng file không được hỗ trợ !!!";
+    return cb(new Error("Định dạng file không được hỗ trợ !!!"), false);
+  }
+  cb(null, true);
+};
 
 // Lưu file,tên file
 const storageImgItems = multer.diskStorage({
-    
-    destination: function(req, file, cb) {
-        cb(null, appRoot + "/src/public/images/Items");
-    },
-    
-    filename: function(req, file, cb) {
+  destination: function (req, file, cb) {
+    cb(null, appRoot + "/src/public/images/Items");
+  },
 
-        let random = Math.floor(Math.random() * 1000000000000000);
-        console.log(random)
+  filename: function (req, file, cb) {
+    let random = Math.floor(Math.random() * 1000000000000000);
+    console.log(random);
 
-        cb(null, file.fieldname + '-' + Date.now() + random + path.extname(file.originalname));
-    }
-
-})
+    cb(
+      null,
+      file.fieldname +
+        "-" +
+        Date.now() +
+        random +
+        path.extname(file.originalname)
+    );
+  },
+});
 
 // Kiểm tra xem tải đúng file không
-const imageFilterImgItems = function(req, file, cb) {
-    // Nếu mà name file không match với các đôi file trên này thì sẽ báo lỗi ra
-    if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
-        req.fileValidationError = 'Định dạng file không được hỗ trợ !!!';
-        return cb(new Error('Định dạng file không được hỗ trợ !!!'), false);
-    }
-    cb(null, true);
-}
+const imageFilterImgItems = function (req, file, cb) {
+  // Nếu mà name file không match với các đôi file trên này thì sẽ báo lỗi ra
+  if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
+    req.fileValidationError = "Định dạng file không được hỗ trợ !!!";
+    return cb(new Error("Định dạng file không được hỗ trợ !!!"), false);
+  }
+  cb(null, true);
+};
 
-export { storageAvata, storageAvataShop,storageImgItems, imageFilterAvataShop,imageFilterAvata ,imageFilterImgItems} 
+export {
+  storageAvata,
+  storageAvataShop,
+  storageImgItems,
+  imageFilterAvataShop,
+  imageFilterAvata,
+  imageFilterImgItems,
+};

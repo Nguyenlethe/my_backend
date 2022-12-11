@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('manage_oders', {
-    id: {
+    await queryInterface.createTable("manage_oders", {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -10,54 +10,54 @@ module.exports = {
       },
       itemsId: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       userGuestId: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       idShop: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       itemsNumber: {
-        type: Sequelize.INTEGER  
+        type: Sequelize.INTEGER,
       },
       timeReceived: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       timeCreate: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       priceShip: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       voucherApply: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       voucherApplyTow: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       color: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       size: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('manage_oders');
-  }
+    await queryInterface.dropTable("manage_oders");
+  },
 };

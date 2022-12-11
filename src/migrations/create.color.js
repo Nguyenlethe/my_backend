@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('colors', {
+    await queryInterface.createTable("colors", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,36 +10,35 @@ module.exports = {
       },
       colorId: {
         allowNull: false,
-        type: Sequelize.STRING
-      }
-      ,
+        type: Sequelize.STRING,
+      },
       idUserCreate: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       code: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       valueEn: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       valueVi: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('colors');
-  }
+    await queryInterface.dropTable("colors");
+  },
 };
