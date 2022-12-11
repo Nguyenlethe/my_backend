@@ -713,106 +713,84 @@ function addNewItems(data) {
           errCode: -2,
           errMessage: "Item already exists",
         });
-      } else {
-        
-        // Thêm data bảmg items
-        let resItems = await db.Items.create({
-          idItems: data.items.idItems,
-          idShop: data.items.idShop,
-          manageId: data.items.manageId,
-          category: data.items.category,
-          type: data.items.type,
-          discounts: data.items.discount || "0",
-          name: data.items.name,
-          nameEn: data.items.nameEn,
-          price: data.items.price,
-          priceUS: data.items.priceUS,
-          newPrice: data.items.newPrice ? data.items.newPrice : "",
-          newPrice: data.items.newPriceUS ? data.items.newPriceUS : "",
-        });
+      }
 
-        if (resItems) {
-          // Thêm data bảmg Items_info
-          let Items_info = await db.Items_info.create({
-            itemsId: data.items_infos.itemsId ? data.items_infos.itemsId : "",
-            describeHtmlEn: data.items_infos.describeHtmlEn,
-            describeTextEn: data.items_infos.describeTextEn,
-            describeHtmlVi: data.items_infos.describeHtmlVi,
-            describeTextVi: data.items_infos.describeTextVi,
-            trademark: data.items_infos.trademark,
-            production: data.items_infos.production
-              ? data.items_infos.production
-              : "",
-            sentFrom: data.items_infos.sentFrom,
-            texture: data.items_infos.texture ? data.items_infos.texture : "",
-          });
+      // Thêm data bảmg items
+      let resItems = await db.Items.create({
+        idItems: data.items.idItems,
+        idShop: data.items.idShop,
+        manageId: data.items.manageId,
+        category: data.items.category,
+        type: data.items.type,
+        discounts: data.items.discount || "0",
+        name: data.items.name,
+        nameEn: data.items.nameEn,
+        price: data.items.price,
+        priceUS: data.items.priceUS,
+        newPrice: data.items.newPrice ? data.items.newPrice : "",
+        newPrice: data.items.newPriceUS ? data.items.newPriceUS : "",
+      });
 
-          if (Items_info) {
-            // Chuyển items_color_images thành mảng
-            let dataColorItemsImg = [];
-            for (let key in data.items_color_images) {
-              dataColorItemsImg.push(data.items_color_images[key]);
-            }
+      // Thêm data bảmg Items_info
+      let Items_info = await db.Items_info.create({
+        itemsId: data.items_infos.itemsId ? data.items_infos.itemsId : "",
+        describeHtmlEn: data.items_infos.describeHtmlEn,
+        describeTextEn: data.items_infos.describeTextEn,
+        describeHtmlVi: data.items_infos.describeHtmlVi,
+        describeTextVi: data.items_infos.describeTextVi,
+        trademark: data.items_infos.trademark,
+        production: data.items_infos.production
+          ? data.items_infos.production
+          : "",
+        sentFrom: data.items_infos.sentFrom,
+        texture: data.items_infos.texture ? data.items_infos.texture : "",
+      });
 
-            // Thêm data bảng items_color_images
-            let resItemsColorImages = await db.Items_color_image.bulkCreate(
-              dataColorItemsImg
-            );
+      // // Chuyển items_color_images thành mảng
+      let dataColorItemsImg = [];
+      for (let key in data.items_color_images) {
+        dataColorItemsImg.push(data.items_color_images[key]);
+      }
+      // Thêm data bảng items_color_images
+      let resItemsColorImages = await db.Items_color_image.bulkCreate(
+        dataColorItemsImg
+      );
 
-            if (resItemsColorImages) {
-              // Chuyển items_size_amount thành mảng
-              let dataItemSizeAmout = [];
-              for (let key in data.items_size_amount) {
-                dataItemSizeAmout.push(data.items_size_amount[key]);
-              }
+      // // Chuyển items_size_amount thành mảng
+      let dataItemSizeAmout = [];
+      for (let key in data.items_size_amount) {
+        dataItemSizeAmout.push(data.items_size_amount[key]);
+      }
+      // Thêm data vào bảng Items_size_amount
+      let resItemSizeAmout = await db.Items_size_amount.bulkCreate(
+        dataItemSizeAmout
+      );
 
-              // Thêm data vào bảng Items_size_amount
-              let resItemSizeAmout = await db.Items_size_amount.bulkCreate(
-                dataItemSizeAmout
-              );
-              if (_.isEmpty(resItemSizeAmout)) {
-                resolve({
-                  errCode: -1,
-                  errMessage: "Add data items_size_amount error",
-                });
-                // Xóa data ở các bảng nếu có lỗi
-                await db.Items.destroy({
-                  where: { idItems: data.items.idItems },
-                });
-                await db.Items_info.destroy({
-                  where: { itemsId: data.items.idItems },
-                });
-                await db.Items_color_image.destroy({
-                  where: { itemId: data.items.idItems },
-                });
-              }
-              resolve({
-                errCode: 0,
-                errMessage: "Ok",
-              });
-            }
-            await db.Items_color_image.destroy({
-              where: { itemId: data.items.idItems },
-            });
-            resolve({
-              errCode: -1,
-              errMessage: "Add data items_color_images error",
-            });
-          }
-          await db.Items_info.destroy({
-            where: { itemsId: data.items.idItems },
-          });
-          resolve({
-            errCode: -1,
-            errMessage: "Add data Items_info error",
-          });
-        }
-        await db.Items.destroy({ where: { idItems: data.items.idItems } });
+      if (resItems && Items_info && resItemsColorImages && resItemSizeAmout) {
         resolve({
-          errCode: -1,
-          errMessage: "Add data Items error",
+          errCode: -2,
+          errMessage: "OK",
+        });
+      }else {
+        // Xóa data ở các bảng nếu có lỗi
+        await db.Items.destroy({
+          where: { idItems: data.items.idItems },
+        });
+        await db.Items_info.destroy({
+          where: { itemsId: data.items.idItems },
+        });
+        await db.Items_color_image.destroy({
+          where: { itemId: data.items.idItems },
+        });
+        await db.Items_size_amount.destroy({
+          where: { itemsId: data.items.idItems },
         });
       }
+
+      resolve({
+        errCode: 0,
+        errMessage: "Item already exists",
+      });
     } catch (error) {
       reject("Error reject 1:", error);
     }
